@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 function RoomPage() {
+    const location = useLocation();
+    const { nickname, roomCode, gameLog, response } = location.state || {};
     const [selectedImages, setSelectedImages] = useState<string[]>([]);;
 
     // Helper to generate 25 unique random numbers for selecting cards
@@ -23,6 +26,7 @@ function RoomPage() {
 
     useEffect(() => {
         fetchImages();
+        console.log(response);
     }, []);
 
     return (
@@ -31,16 +35,12 @@ function RoomPage() {
                 {selectedImages.map((image, index) => (
                     <div key={index} className="w-full h-32 bg-gray-200">
                         <img
-                        src={`/codenames-cards/${image}`}
-                        alt={`Card ${index + 1}`}
-                        className="w-full h-full object-cover rounded"
+                            src={`/codenames-cards/${image}`}
+                            alt={`Card ${index + 1}`}
+                            className="w-full h-full object-cover rounded"
                         />
                     </div>
                 ))}
-            </div>
-            {/* <img src="/codenames-cards/card-0.jpg"/> */}
-            <div>
-
             </div>
         </div>
     );
