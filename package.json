@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "clsx": "^2.1.1",
+    "codenames-frontend": "file:",
     "cra-template-typescript": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.2",
     "react-scripts": "^5.0.1",
     "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^2.5.5",
     "web-vitals": "^4.2.4"
   },
   "scripts": {

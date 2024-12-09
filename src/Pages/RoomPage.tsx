@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSocket } from "../SocketContext";
+import TeamTracker from "../Components/TeamTracker";
 
 function RoomPage() {
     const location = useLocation();
     const { nickname, roomCode, gameLog, response } = location.state || {};
-    const [selectedImages, setSelectedImages] = useState<string[]>([]);;
+    const { socket } = useSocket();
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
     // Helper to generate 25 unique random numbers for selecting cards
     const getRandomNumbers = (min: number, max: number, count: number) => {
@@ -26,12 +29,25 @@ function RoomPage() {
 
     useEffect(() => {
         fetchImages();
-        console.log(response);
     }, []);
 
+    // Ensure we have a socket before rendering
+    if (!socket) return <div>Loading...</div>;
+
     return (
-        <div className="h-screen flex flex-col items-center justify-center p-4">
-            <div className="grid grid-cols-5 grid-rows-5 gap-2 max-w-screen-sm w-full">
+        <div className="h-screen flex justify-between p-4">
+            {/* Left Column: Red Team Tracker */}
+            <div className="w-1/4">
+                <TeamTracker
+                    socket={socket}
+                    roomCode={roomCode}
+                    nickname={nickname}
+                    teamColor="red"
+                />
+            </div>
+
+            {/* Middle Column: Game Images */}
+            <div className="w-2/4 grid grid-cols-5 grid-rows-5 gap-2 max-w-screen-sm w-full">
                 {selectedImages.map((image, index) => (
                     <div key={index} className="w-full h-32 bg-gray-200">
                         <img
@@ -42,7 +58,18 @@ function RoomPage() {
                     </div>
                 ))}
             </div>
+
+            {/* Right Column: Blue Team Tracker */}
+            <div className="w-1/4">
+                <TeamTracker
+                    socket={socket}
+                    roomCode={roomCode}
+                    nickname={nickname}
+                    teamColor="blue"
+                />
+            </div>
         </div>
     );
 }
+
 export default RoomPage;

@@ -1,28 +1,35 @@
 import { useState, useEffect } from "react";
 import { io, Socket } from 'socket.io-client';
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../SocketContext";
 
 function HomePage() {
     const [nickname, setNickname] = useState("");
     const [roomCode, setRoomCode] = useState("");
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const { socket } = useSocket();
+    const navigate = useNavigate();
 
-    let navigate = useNavigate();
-
+    // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Validate inputs
         if (!nickname || !roomCode) {
             alert("Please enter both nickname and room code");
             return;
         }
 
+        // Ensure socket is connected before emitting events
+        if (!socket || !socket.connected) {
+            alert("Socket connection lost. Please refresh.");
+            return;
+        }
+
         // Emit join server event first
-        socket?.emit("join server", nickname);
+        socket.emit("join server", nickname);
 
         // Join specific room
-        socket?.emit("join room", roomCode, nickname, (gameLog: any[], response: any) => {
+        socket.emit("join room", roomCode, nickname, (gameLog: any[], response: any) => {
             if (response.success) {
                 navigate(`/room/${roomCode}`, {
                     state: {
@@ -37,23 +44,6 @@ function HomePage() {
             }
         })
     }
-
-
-    useEffect(() => {
-        // Create socket connection
-        const newSocket = io('http://localhost:4000');
-        setSocket(newSocket);
-
-        // Listen for connection event
-        newSocket.on('connect', () => {
-            console.log('Successfully connected to the server!');
-        });
-
-        // Clean up socket connection
-        return () => {
-            newSocket.disconnect();
-        };
-    }, []);
 
     return (
         <div className="h-screen flex flex-col items-center justify-center">
