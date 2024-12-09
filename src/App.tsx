@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import HomePage from './Pages/HomePage';
+import RoomPage from './Pages/RoomPage';
 
 function App() {
 
@@ -23,7 +26,12 @@ function App() {
 
   return (
     <div className="App">
-      <h1>CodeNames</h1>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<HomePage/>} />
+          <Route path="/room/:roomCode" element={<RoomPage/>} />
+        </Routes>
+      </HashRouter>
     </div>
   );
 }
