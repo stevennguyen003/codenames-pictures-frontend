@@ -60,6 +60,7 @@ function RoomPage() {
 
         socket.emit('join room', roomCode, nickname, (gameLog: any[], roomInfo: any) => {
             if (roomInfo.success) {
+                console.log("Room Details: ", roomDetails);
                 setRoomDetails({
                     gameLog: gameLog || [],
                     users: roomInfo.users || [],
@@ -87,6 +88,7 @@ function RoomPage() {
     }
 
     useEffect(() => {
+        console.log(socket?.id);
         fetchImages();
         fetchRoomDetails();
 

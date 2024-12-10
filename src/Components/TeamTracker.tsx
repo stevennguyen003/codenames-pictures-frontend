@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 
 interface TeamMember {
@@ -16,42 +16,27 @@ interface TeamTrackerProps {
     onTeamMembersUpdate?: (members: TeamMember[]) => void;
 }
 
-const TeamTracker: React.FC<TeamTrackerProps> = ({ 
-    socket, 
-    roomCode, 
-    nickname, 
-    teamColor, 
-    teamMembersRef,
-    onTeamMembersUpdate 
-}) => {
-    // Local state for team members if no ref is provided
-    const [localTeamMembers, setLocalTeamMembers] = useState<TeamMember[]>([]);
+const TeamTracker: React.FC<TeamTrackerProps> = ({ socket, roomCode, nickname, teamColor }) => {
+    // Representing the members of a team
+    const [teamMembers, setTeamMembers] = useState<{
+        nickname: string;
+        id: string;
+        role: 'spectator' | 'operator' | 'spymaster';
+    }[]>([]);
     const [joinError, setJoinError] = useState<string | null>(null);
-
-    // Determine which team members to use
-    const teamMembers = teamMembersRef ? teamMembersRef.current : localTeamMembers;
 
     useEffect(() => {
         // Listen for team updates
-        const handleTeamUpdate = (data: any) => {
+        socket.on('team updated', (data) => {
             const teamToUpdate = teamColor === 'red' ? data.teamRed : data.teamBlue;
-            
-            // Update either the ref or local state
-            if (teamMembersRef && onTeamMembersUpdate) {
-                teamMembersRef.current = teamToUpdate;
-                onTeamMembersUpdate(teamToUpdate);
-            } else {
-                setLocalTeamMembers(teamToUpdate);
-            }
-        };
-
-        socket.on('team updated', handleTeamUpdate);
+            setTeamMembers(teamToUpdate);
+        });
 
         // Cleanup listener on unmount
         return () => {
-            socket.off('team updated', handleTeamUpdate);
+            socket.off('team updated');
         };
-    }, [socket, teamColor, teamMembersRef, onTeamMembersUpdate]);
+    }, [socket, teamColor]);
 
     const handleJoinTeam = (roleType: 'operator' | 'spymaster') => {
         socket.emit('select role', roomCode, nickname, teamColor, roleType, (response: any) => {
@@ -100,7 +85,7 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({
                     <p className="text-gray-500">No team members yet</p>
                 ) : (
                     <ul>
-                        {teamMembers.map((member) => (
+                        {teamMembers.map((member, index) => (
                             <li
                                 key={member.id}
                                 className={`${member.role === 'spymaster'
@@ -116,12 +101,6 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({
                     </ul>
                 )}
             </div>
-
-            {joinError && (
-                <div className="text-red-500 mt-2">
-                    {joinError}
-                </div>
-            )}
         </div>
     );
 };
