@@ -12,36 +12,43 @@ interface TeamTrackerProps {
     roomCode: string;
     nickname: string;
     teamColor: 'red' | 'blue';
-    teamMembersRef?: React.MutableRefObject<TeamMember[]>;
+    teamMembers: TeamMember[];
     onTeamMembersUpdate?: (members: TeamMember[]) => void;
 }
 
-const TeamTracker: React.FC<TeamTrackerProps> = ({ socket, roomCode, nickname, teamColor }) => {
-    // Representing the members of a team
-    const [teamMembers, setTeamMembers] = useState<{
-        nickname: string;
-        id: string;
-        role: 'spectator' | 'operator' | 'spymaster';
-    }[]>([]);
+const TeamTracker: React.FC<TeamTrackerProps> = ({ 
+    socket, 
+    roomCode, 
+    nickname, 
+    teamColor, 
+    teamMembers,
+    onTeamMembersUpdate 
+}) => {
     const [joinError, setJoinError] = useState<string | null>(null);
 
     useEffect(() => {
         // Listen for team updates
-        socket.on('team updated', (data) => {
+        const handleTeamUpdate = (data: any) => {
             const teamToUpdate = teamColor === 'red' ? data.teamRed : data.teamBlue;
-            setTeamMembers(teamToUpdate);
-        });
+            
+            // Call update callback if provided
+            if (onTeamMembersUpdate) {
+                onTeamMembersUpdate(teamToUpdate);
+            }
+        };
+
+        socket.on('team updated', handleTeamUpdate);
 
         // Cleanup listener on unmount
         return () => {
-            socket.off('team updated');
+            socket.off('team updated', handleTeamUpdate);
         };
-    }, [socket, teamColor]);
+    }, [socket, teamColor, onTeamMembersUpdate]);
 
     const handleJoinTeam = (roleType: 'operator' | 'spymaster') => {
         socket.emit('select role', roomCode, nickname, teamColor, roleType, (response: any) => {
             if (response.success) {
-                console.log('joined team');
+                console.log('Joined team:', response);
                 setJoinError(null);
             } else {
                 console.log('failed joining team');
@@ -85,7 +92,7 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({ socket, roomCode, nickname, t
                     <p className="text-gray-500">No team members yet</p>
                 ) : (
                     <ul>
-                        {teamMembers.map((member, index) => (
+                        {teamMembers.map((member) => (
                             <li
                                 key={member.id}
                                 className={`${member.role === 'spymaster'

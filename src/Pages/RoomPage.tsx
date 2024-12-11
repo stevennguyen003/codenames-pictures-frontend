@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useSocket } from "../SocketContext";
 import TeamTracker from "../Components/TeamTracker";
@@ -33,10 +33,6 @@ function RoomPage() {
         teamBlue: []
     });
 
-    // Refs for team members to maintain persistence
-    const redTeamMembersRef = useRef<TeamMember[]>([]);
-    const blueTeamMembersRef = useRef<TeamMember[]>([]);
-
     // Helper to generate 25 unique random numbers for selecting cards
     const getRandomNumbers = (min: number, max: number, count: number) => {
         const numbers = new Set();
@@ -60,7 +56,7 @@ function RoomPage() {
 
         socket.emit('join room', roomCode, nickname, (gameLog: any[], roomInfo: any) => {
             if (roomInfo.success) {
-                console.log("Room Details: ", roomDetails);
+                console.log("Room Info: ", roomInfo);
                 setRoomDetails({
                     gameLog: gameLog || [],
                     users: roomInfo.users || [],
@@ -68,27 +64,19 @@ function RoomPage() {
                     teamRed: roomInfo.teamRed || [],
                     teamBlue: roomInfo.teamBlue || []
                 });
-
-                // Update refs with initial team data
-                redTeamMembersRef.current = roomInfo.teamRed || [];
-                blueTeamMembersRef.current = roomInfo.teamBlue || [];
             }
         });
     }
 
     // Update team members function
     const updateTeamMembers = (teamColor: 'red' | 'blue', members: TeamMember[]) => {
-        if (teamColor === 'red') {
-            redTeamMembersRef.current = members;
-            setRoomDetails(prev => ({ ...prev, teamRed: members }));
-        } else {
-            blueTeamMembersRef.current = members;
-            setRoomDetails(prev => ({ ...prev, teamBlue: members }));
-        }
+        setRoomDetails(prev => ({
+            ...prev,
+            [teamColor === 'red' ? 'teamRed' : 'teamBlue']: members
+        }));
     }
 
     useEffect(() => {
-        console.log(socket?.id);
         fetchImages();
         fetchRoomDetails();
 
@@ -100,10 +88,6 @@ function RoomPage() {
                 teamRed: data.teamRed,
                 teamBlue: data.teamBlue
             }));
-
-            // Update refs
-            redTeamMembersRef.current = data.teamRed;
-            blueTeamMembersRef.current = data.teamBlue;
         });
 
         // Cleanup
@@ -124,7 +108,7 @@ function RoomPage() {
                     roomCode={roomCode}
                     nickname={nickname}
                     teamColor="red"
-                    teamMembersRef={redTeamMembersRef}
+                    teamMembers={roomDetails.teamRed}
                     onTeamMembersUpdate={(members) => updateTeamMembers('red', members)}
                 />
             </div>
@@ -152,7 +136,7 @@ function RoomPage() {
                     roomCode={roomCode}
                     nickname={nickname}
                     teamColor="blue"
-                    teamMembersRef={blueTeamMembersRef}
+                    teamMembers={roomDetails.teamBlue}
                     onTeamMembersUpdate={(members) => updateTeamMembers('blue', members)}
                 />
             </div>
