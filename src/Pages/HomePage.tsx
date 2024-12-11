@@ -1,10 +1,11 @@
-import { useState } from "react";
+// HomePage.tsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../SocketContext";
+import { useSocket } from "../Contexts/SocketContext";
+import { useNickname } from "../Contexts/NicknameContext";
 
-// Home page that displays on user arrival
 function HomePage() {
-    const [nickname, setNickname] = useState("");
+    const { nickname, setNickname } = useNickname(); // Use context for nickname
     const [roomCode, setRoomCode] = useState("");
     const { socket } = useSocket();
     const navigate = useNavigate();
@@ -36,10 +37,7 @@ function HomePage() {
                 console.log(roomInfo);
                 navigate(`/room/${roomCode}`, {
                     state: {
-                        nickname,
                         roomCode,
-                        gameLog,
-                        ...roomInfo  // Spread the entire room info
                     }
                 });
             } else {
@@ -60,7 +58,7 @@ function HomePage() {
                             type="text"
                             placeholder="nickname"
                             value={nickname}
-                            onChange={(e) => { setNickname(e.target.value) }}
+                            onChange={(e) => { setNickname(e.target.value) }} // Update nickname through context
                         />
                     </div>
                 </div>

@@ -40,7 +40,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
             reconnectSocket.on('disconnect', () => {
                 console.log('Socket disconnected');
-                // Optionally, handle disconnection logic
             });
         }
     };
