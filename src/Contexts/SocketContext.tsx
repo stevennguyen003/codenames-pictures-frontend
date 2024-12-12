@@ -1,47 +1,70 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
 
-const SocketContext = createContext<{ socket: Socket | null }>({ socket: null });
+// Define the shape of the context value
+interface SocketContextType {
+    socket: Socket | null;
+    sessionId: string | null;
+    reconnect: () => void;
+}
+
+// Create a context for the socket connection and session
+const SocketContext = createContext<SocketContextType>({ 
+    socket: null, 
+    sessionId: null,
+    reconnect: () => {}
+});
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [sessionId, setSessionId] = useState<string | null>(null);
 
+    // Initialize the socket connection and handle session persistence
     const initSocket = () => {
-        const savedSocketId = localStorage.getItem('socketId'); // Get socket ID from localStorage
+        // Retrieve or generate session ID
+        let existingSessionId = localStorage.getItem('sessionId');
+        if (!existingSessionId) {
+            existingSessionId = uuidv4();
+            localStorage.setItem('sessionId', existingSessionId);
+        }
 
-        if (!savedSocketId) {
-            // If there's no saved socket ID, create a new socket connection
-            const newSocket = io('http://localhost:4000', { secure: false });
+        console.log("Existing Session ID: ", existingSessionId);
 
-            newSocket.on('connect', () => {
-                console.log('Socket connected:', newSocket.id);
-                // Save socket ID in localStorage
-                if (newSocket.id) {
-                    localStorage.setItem('socketId', newSocket.id);
+        setSessionId(existingSessionId);
+
+        // Create a socket connection
+        const newSocket = io('http://localhost:4000', { 
+            withCredentials: true,
+            query: { sessionId: existingSessionId }
+        });
+
+        // Authenticate session
+        newSocket.on('connect', () => {
+            newSocket.emit('authenticate', existingSessionId, (response: any) => {
+                if (response.success) {
+                    // Existing session, nickname already set
+                    console.log('Authenticated with existing session');
+                } else {
+                    // New session generated
+                    console.log('New session created');
                 }
             });
+        });
 
-            newSocket.on('disconnect', () => {
-                console.log('Socket disconnected');
-                // Optionally, remove socket ID from localStorage when disconnected
-                localStorage.removeItem('socketId');
-            });
+        newSocket.on('disconnect', () => {
+            console.log('Socket disconnected');
+        });
 
-            setSocket(newSocket);
-        } else {
-            // If there's a saved socket ID, try to reconnect
-            const reconnectSocket = io('http://localhost:4000', { secure: false });
-            reconnectSocket.io.opts.query = { socketId: savedSocketId }; // Optional: Send the socket ID if needed on the server side
+        setSocket(newSocket);
+    };
 
-            reconnectSocket.on('connect', () => {
-                console.log('Reconnected socket:', reconnectSocket.id);
-                setSocket(reconnectSocket);
-            });
-
-            reconnectSocket.on('disconnect', () => {
-                console.log('Socket disconnected');
-            });
+    // Reconnection method
+    const reconnect = () => {
+        if (socket) {
+            socket.disconnect();
         }
+        initSocket();
     };
 
     useEffect(() => {
@@ -51,19 +74,26 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return () => {
             if (socket) {
                 socket.disconnect();
-                localStorage.removeItem('socketId'); // Clean up the socket ID on disconnect
                 console.log('Socket disconnected and cleaned up');
             }
         };
     }, []);
 
     return (
-        <SocketContext.Provider value={{ socket }}>
+        <SocketContext.Provider value={{ socket, sessionId, reconnect }}>
             {children}
         </SocketContext.Provider>
     );
 };
 
+// Custom hook to use socket context
 export const useSocket = () => {
-    return useContext(SocketContext);
+    const context = useContext(SocketContext);
+    
+    // Check to ensure the hook is used within a SocketProvider
+    if (context === undefined) {
+        throw new Error('useSocket must be used within a SocketProvider');
+    }
+    
+    return context;
 };

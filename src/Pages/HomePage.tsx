@@ -1,16 +1,20 @@
-// HomePage.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../Contexts/SocketContext";
-import { useNickname } from "../Contexts/NicknameContext";
 
 function HomePage() {
-    const { nickname, setNickname } = useNickname(); // Use context for nickname
+    const [nickname, setNickname] = useState<string>("");
     const [roomCode, setRoomCode] = useState("");
-    const { socket } = useSocket();
+    const { socket, sessionId } = useSocket();
     const navigate = useNavigate();
 
-    console.log(socket?.id);
+    // // Effect to check for stored nickname
+    // useEffect(() => {
+    //     const storedNickname = localStorage.getItem('nickname');
+    //     if (storedNickname) {
+    //         setNickname(storedNickname);
+    //     }
+    // }, [setNickname]);
 
     // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
@@ -28,8 +32,11 @@ function HomePage() {
             return;
         }
 
-        // Emit join server event first
-        socket.emit("join server", nickname);
+        // Store nickname in localStorage
+        localStorage.setItem('nickname', nickname);
+
+        // Emit join server event with session ID
+        socket.emit("join server", nickname, sessionId);
 
         // Join specific room with updated callback
         socket.emit("join room", roomCode, nickname, (gameLog: any[], roomInfo: any) => {
@@ -58,7 +65,7 @@ function HomePage() {
                             type="text"
                             placeholder="nickname"
                             value={nickname}
-                            onChange={(e) => { setNickname(e.target.value) }} // Update nickname through context
+                            onChange={(e) => { setNickname(e.target.value) }}
                         />
                     </div>
                 </div>
@@ -80,7 +87,7 @@ function HomePage() {
                             className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" 
                             type="submit"
                         >
-                            Sign Up
+                            Join Room
                         </button>
                     </div>
                 </div>
@@ -88,4 +95,5 @@ function HomePage() {
         </div>
     );
 }
+
 export default HomePage;

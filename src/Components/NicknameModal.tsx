@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNickname } from "../Contexts/NicknameContext"; // Import the custom hook for nickname context
 
 interface NicknameModalProps {
     isVisible: boolean;
@@ -8,13 +7,15 @@ interface NicknameModalProps {
 }
 
 const NicknameModal: React.FC<NicknameModalProps> = ({ isVisible, onNicknameSubmit, onClose }) => {
-    const { setNickname } = useNickname();  // Access setNickname from context
-    const [nickname, setLocalNickname] = useState<string>("");
+    const [localNickname, setLocalNickname] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     const handleSubmit = () => {
-        if (nickname.trim()) {
-            setNickname(nickname);  // Set the nickname in context
-            onNicknameSubmit(nickname);  // Notify the parent that the nickname has been submitted
+        if (localNickname.trim()) {
+            setError("");
+            onNicknameSubmit(localNickname);
+        } else {
+            setError("Nickname cannot be empty.");
         }
     };
 
@@ -27,10 +28,11 @@ const NicknameModal: React.FC<NicknameModalProps> = ({ isVisible, onNicknameSubm
                 <input
                     type="text"
                     className="border-2 border-gray-300 p-2 w-full rounded mb-4"
-                    value={nickname}
+                    value={localNickname}
                     onChange={(e) => setLocalNickname(e.target.value)} // Update local state
                     placeholder="Enter nickname"
                 />
+                {error && <p className="text-red-500 text-sm mb-4">{error}</p>} {/* Error message */}
                 <div className="flex justify-between">
                     <button
                         onClick={handleSubmit}

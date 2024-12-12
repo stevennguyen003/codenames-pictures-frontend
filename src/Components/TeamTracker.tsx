@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 
-interface TeamMember {
+// Define the TeamMember interface
+export interface TeamMember {
     nickname: string;
     id: string;
     role: 'spectator' | 'operator' | 'spymaster';
 }
 
+// Update the TeamTrackerProps interface
 interface TeamTrackerProps {
     socket: Socket;
     roomCode: string;
     nickname: string;
     teamColor: 'red' | 'blue';
-    teamMembers: TeamMember[];
+    teamMembers?: TeamMember[]; // Make teamMembers optional
     onTeamMembersUpdate?: (members: TeamMember[]) => void;
 }
 
@@ -21,15 +23,24 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({
     roomCode, 
     nickname, 
     teamColor, 
-    teamMembers,
+    teamMembers = [], // Provide a default empty array
     onTeamMembersUpdate 
 }) => {
+    const [localTeamMembers, setLocalTeamMembers] = useState<TeamMember[]>(teamMembers);
     const [joinError, setJoinError] = useState<string | null>(null);
+
+    // Update local team members when props change
+    useEffect(() => {
+        setLocalTeamMembers(teamMembers);
+    }, [teamMembers]);
 
     useEffect(() => {
         // Listen for team updates
         const handleTeamUpdate = (data: any) => {
             const teamToUpdate = teamColor === 'red' ? data.teamRed : data.teamBlue;
+            
+            // Update local state
+            setLocalTeamMembers(teamToUpdate);
             
             // Call update callback if provided
             if (onTeamMembersUpdate) {
@@ -63,6 +74,13 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({
                 {teamColor.charAt(0).toUpperCase() + teamColor.slice(1)} Team
             </h2>
 
+            {/* Error Message */}
+            {joinError && (
+                <div className="text-red-500 mb-4">
+                    {joinError}
+                </div>
+            )}
+
             {/* Buttons to Join Teams */}
             <div className="flex space-x-2 mb-4">
                 <button
@@ -88,11 +106,11 @@ const TeamTracker: React.FC<TeamTrackerProps> = ({
             {/* Team Members List */}
             <div>
                 <h3 className="font-semibold mb-2">Team Members:</h3>
-                {teamMembers.length === 0 ? (
+                {localTeamMembers.length === 0 ? (
                     <p className="text-gray-500">No team members yet</p>
                 ) : (
                     <ul>
-                        {teamMembers.map((member) => (
+                        {localTeamMembers.map((member) => (
                             <li
                                 key={member.id}
                                 className={`${member.role === 'spymaster'
