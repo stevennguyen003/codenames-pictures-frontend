@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSocket } from "../Contexts/SocketContext";
 import { useRoomDetails } from "../Hooks/useRoomDetails";
 import { useGameLogic } from "../Hooks/useGameLogic";
@@ -7,8 +7,10 @@ import TeamTracker from "../Components/TeamTracker";
 import NicknameModal from "../Components/NicknameModal";
 
 function RoomPage() {
-    const location = useLocation();
-    const { roomCode } = location.state || {};
+    const navigate = useNavigate();
+    const { roomCode } = useParams();
+    // Null checker
+    const finalRoomCode = roomCode ?? "invalid";
     const { socket } = useSocket();
 
     // Use the NicknameContext to get and set the nickname
@@ -16,8 +18,11 @@ function RoomPage() {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     // Use the custom hook to fetch room details
-    const roomDetails = useRoomDetails(roomCode, nickname);
-    const { canGameStart, startGame, gameStarted } = useGameLogic(roomCode, roomDetails, socket);
+    console.log("Room Code: ", roomCode);
+    console.log("Nickname: ", nickname);
+    const roomDetails = useRoomDetails(finalRoomCode, nickname);
+    console.log("Room Details: ", roomDetails);
+    const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
@@ -36,7 +41,20 @@ function RoomPage() {
     };
 
     // Ensure we have a socket before rendering
-    if (!socket) return <div>Loading...</div>;
+    if (!socket || finalRoomCode === "invalid") {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center p-4">
+                <h1 className="text-xl text-red-500">Error joining room</h1>
+                <p className="mt-4 text-gray-600">The room code is invalid or there was an issue with the connection.</p>
+                <button
+                    onClick={() => navigate("/")}
+                    className="mt-6 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+                >
+                    Go Back Home
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen flex justify-between p-4">
@@ -51,7 +69,7 @@ function RoomPage() {
             <div className="w-1/4">
                 <TeamTracker
                     socket={socket}
-                    roomCode={roomCode}
+                    roomCode={finalRoomCode}
                     nickname={nickname}
                     teamColor="red"
                     teamMembers={roomDetails.teamRed}
@@ -114,7 +132,7 @@ function RoomPage() {
             <div className="w-1/4">
                 <TeamTracker
                     socket={socket}
-                    roomCode={roomCode}
+                    roomCode={finalRoomCode}
                     nickname={nickname}
                     teamColor="blue"
                     teamMembers={roomDetails.teamBlue}

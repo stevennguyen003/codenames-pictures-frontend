@@ -8,14 +8,6 @@ function HomePage() {
     const { socket, sessionId } = useSocket();
     const navigate = useNavigate();
 
-    // // Effect to check for stored nickname
-    // useEffect(() => {
-    //     const storedNickname = localStorage.getItem('nickname');
-    //     if (storedNickname) {
-    //         setNickname(storedNickname);
-    //     }
-    // }, [setNickname]);
-
     // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,11 +34,7 @@ function HomePage() {
         socket.emit("join room", roomCode, nickname, (gameLog: any[], roomInfo: any) => {
             if (roomInfo.success) {
                 console.log(roomInfo);
-                navigate(`/room/${roomCode}`, {
-                    state: {
-                        roomCode,
-                    }
-                });
+                navigate(`/room/${roomCode}`);
             } else {
                 alert("Failed to join room")
             }

@@ -39,6 +39,7 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         if (!socket || !roomCode) return;
 
         socket.emit('join room', roomCode, nickname, (gameLog: any[], roomInfo: any) => {
+            console.log("Room Info on Join: ", roomInfo);
             if (roomInfo.success) {
                 setRoomDetails({
                     gameLog: gameLog || [],
