@@ -18,10 +18,8 @@ function RoomPage() {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     // Use the custom hook to fetch room details
-    console.log("Room Code: ", roomCode);
-    console.log("Nickname: ", nickname);
     const roomDetails = useRoomDetails(finalRoomCode, nickname);
-    console.log("Room Details: ", roomDetails);
+    // const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
     const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {

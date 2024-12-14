@@ -29,12 +29,13 @@ export const useGameLogic = (roomCode: string, roomDetails: RoomDetails, socket:
 
     // Check if the game can start based on team roles
     const canGameStart = () => {
-        const redSpymasters = roomDetails.teamRed.filter(member => member.role === 'spymaster');
-        const redOperators = roomDetails.teamRed.filter(member => member.role === 'operator');
-        const blueSpymasters = roomDetails.teamBlue.filter(member => member.role === 'spymaster');
-        const blueOperators = roomDetails.teamBlue.filter(member => member.role === 'operator');
+        // const redSpymasters = roomDetails.teamRed.filter(member => member.role === 'spymaster');
+        // const redOperators = roomDetails.teamRed.filter(member => member.role === 'operator');
+        // const blueSpymasters = roomDetails.teamBlue.filter(member => member.role === 'spymaster');
+        // const blueOperators = roomDetails.teamBlue.filter(member => member.role === 'operator');
 
-        return redSpymasters.length >= 1 && redOperators.length >= 1 && blueSpymasters.length >= 1 && blueOperators.length >= 1;
+        // return redSpymasters.length >= 1 && redOperators.length >= 1 && blueSpymasters.length >= 1 && blueOperators.length >= 1;
+        return true;
     };
 
     // Function to start the game
