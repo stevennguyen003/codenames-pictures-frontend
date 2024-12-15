@@ -6,20 +6,18 @@ import { useGameLogic } from "../Hooks/useGameLogic";
 import TeamTracker from "../Components/TeamTracker";
 import NicknameModal from "../Components/NicknameModal";
 
+// Displays a room page
 function RoomPage() {
     const navigate = useNavigate();
     const { roomCode } = useParams();
-    // Null checker
     const finalRoomCode = roomCode ?? "invalid";
     const { socket } = useSocket();
-
-    // Use the NicknameContext to get and set the nickname
     const [nickname, setNickname] = useState<string>("");
     const [showModal, setShowModal] = useState<boolean>(false);
 
     // Use the custom hook to fetch room details
     const roomDetails = useRoomDetails(finalRoomCode, nickname);
-    // const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
+    console.log("Room Details: ", roomDetails);
     const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
@@ -53,7 +51,7 @@ function RoomPage() {
             </div>
         );
     }
-
+    
     return (
         <div className="h-screen flex justify-between p-4">
             {/* Modal for nickname input */}

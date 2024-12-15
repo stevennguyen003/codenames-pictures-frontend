@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../Contexts/SocketContext";
 
@@ -8,7 +8,7 @@ function HomePage() {
     const { socket, sessionId } = useSocket();
     const navigate = useNavigate();
 
-    // Handle form submission
+    // Handle form submission with new user
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -33,7 +33,6 @@ function HomePage() {
         // Join specific room with updated callback
         socket.emit("join room", roomCode, nickname, (gameLog: any[], roomInfo: any) => {
             if (roomInfo.success) {
-                console.log(roomInfo);
                 navigate(`/room/${roomCode}`);
             } else {
                 alert("Failed to join room")

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,9 +19,10 @@ const SocketContext = createContext<SocketContextType>({
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [sessionId, setSessionId] = useState<string | null>(null);
+    const socketRef = useRef<Socket | null>(null);
 
     // Initialize the socket connection and handle session persistence
-    const initSocket = () => {
+    const initSocket = useCallback(() => {
         // Retrieve or generate session ID
         let existingSessionId = localStorage.getItem('sessionId');
         if (!existingSessionId) {
@@ -57,27 +58,28 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
 
         setSocket(newSocket);
-    };
+        socketRef.current = newSocket;
+    }, []);
 
     // Reconnection method
-    const reconnect = () => {
-        if (socket) {
-            socket.disconnect();
+    const reconnect = useCallback(() => {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
         }
         initSocket();
-    };
+    }, [initSocket]); 
 
     useEffect(() => {
         initSocket();
 
         // Clean up socket connection when component unmounts
         return () => {
-            if (socket) {
-                socket.disconnect();
+            if (socketRef.current) {
+                socketRef.current.disconnect();
                 console.log('Socket disconnected and cleaned up');
             }
         };
-    }, []);
+    }, [initSocket]);
 
     return (
         <SocketContext.Provider value={{ socket, sessionId, reconnect }}>
