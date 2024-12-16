@@ -15,8 +15,8 @@ function RoomPage() {
     const [nickname, setNickname] = useState<string>("");
     const [showModal, setShowModal] = useState<boolean>(false);
 
-    // Use the custom hook to fetch room details
-    const roomDetails = useRoomDetails(finalRoomCode, nickname);
+    // Use custom hook to fetch room details
+    const { roomDetails, selectTeamRole, joinError } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
     const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
@@ -51,7 +51,7 @@ function RoomPage() {
             </div>
         );
     }
-    
+
     return (
         <div className="h-screen flex justify-between p-4">
             {/* Modal for nickname input */}
@@ -64,11 +64,10 @@ function RoomPage() {
             {/* Left Column: Red Team Tracker */}
             <div className="w-1/4">
                 <TeamTracker
-                    socket={socket}
-                    roomCode={finalRoomCode}
-                    nickname={nickname}
                     teamColor="red"
                     teamMembers={roomDetails.teamRed}
+                    onSelectRole={selectTeamRole}
+                    joinError={joinError}
                 />
             </div>
 
@@ -127,11 +126,10 @@ function RoomPage() {
             {/* Right Column: Blue Team Tracker */}
             <div className="w-1/4">
                 <TeamTracker
-                    socket={socket}
-                    roomCode={finalRoomCode}
-                    nickname={nickname}
                     teamColor="blue"
                     teamMembers={roomDetails.teamBlue}
+                    onSelectRole={selectTeamRole}
+                    joinError={joinError}
                 />
             </div>
         </div>

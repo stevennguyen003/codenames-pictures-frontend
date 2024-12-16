@@ -1,30 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../Contexts/SocketContext';
 import RoomPage from '../Pages/RoomPage';
+import { TeamMember, GameCard, RoomDetails } from '../Interfaces';
 
-interface TeamMember {
-    nickname: string;
-    id: string;
-    role: 'spectator' | 'operator' | 'spymaster';
-}
-
-interface GameCard {
-    image: string;
-    type: 'red' | 'blue' | 'neutral' | 'assassin';
-    revealed: boolean;
-}
-
-interface RoomDetails {
-    gameLog: any[];
-    users: any[];
-    spectators: TeamMember[];
-    teamRed: TeamMember[];
-    teamBlue: TeamMember[];
-    gameStarted: boolean;
-    gameGrid?: GameCard[];
-    currentTurn?: 'red' | 'blue';
-}
-
+// Custom hook to handle game logic, specifically board management and score
 export const useGameLogic = (roomCode: string, roomDetails: RoomDetails, socket: any) => {
     const [gameStarted, setGameStarted] = useState<boolean>(roomDetails.gameStarted);
 
