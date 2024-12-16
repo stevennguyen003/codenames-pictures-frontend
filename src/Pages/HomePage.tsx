@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../Contexts/SocketContext";
 
@@ -35,6 +35,7 @@ function HomePage() {
             if (roomInfo.success) {
                 navigate(`/room/${roomCode}`);
             } else {
+                // TODO - Customize
                 alert("Failed to join room")
             }
         });

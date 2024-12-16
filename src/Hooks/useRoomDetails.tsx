@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSocket } from '../Contexts/SocketContext';
-import { RoomDetails } from '../Interfaces';
+import { RoomDetails, UserDetails } from '../Interfaces';
 
 export const useRoomDetails = (roomCode: string, nickname: string) => {
     const { socket } = useSocket();
@@ -11,9 +11,13 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         teamRed: [],
         teamBlue: [],
         gameGrid: [],
-        gameStarted: false,
+        gameStarted: false
     });
     const [joinError, setJoinError] = useState<string | null>(null);
+    const [userDetails, setUserDetails] = useState<UserDetails>({
+        teamColor: 'spectator', 
+        role: null
+    });
 
     // Unified method for selecting a team role
     const selectTeamRole = useCallback((teamColor: 'red' | 'blue', roleType: 'operator' | 'spymaster') => {
@@ -25,6 +29,7 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
 
             socket.emit('select role', roomCode, nickname, teamColor, roleType, (response: any) => {
                 if (response.success) {
+                    setUserDetails({ teamColor, role: roleType });
                     setJoinError(null);
                     resolve(true);
                 } else {
@@ -43,6 +48,18 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         const handleInitialJoin = (gameLog: any[], roomInfo: any) => {
             console.log("Room Info on Join: ", roomInfo);
             if (roomInfo.success) {
+
+                // Updating user role and teamColor
+                const userInTeamRed = roomInfo.teamRed.find((member: any) => member.nickname === nickname);
+                const userInTeamBlue = roomInfo.teamBlue.find((member: any) => member.nickname === nickname);
+                if (userInTeamRed) {
+                    setUserDetails({ teamColor: 'red', role: userInTeamRed.role });
+                } else if (userInTeamBlue) {
+                    setUserDetails({ teamColor: 'blue', role: userInTeamBlue.role });
+                } else {
+                    setUserDetails({ teamColor: 'spectator', role: null });
+                }
+
                 setRoomDetails({
                     gameLog: gameLog || [],
                     users: roomInfo.users || [],
@@ -51,6 +68,7 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
                     teamBlue: roomInfo.teamBlue || [],
                     gameGrid: roomInfo.gameGrid || [],
                     gameStarted: roomInfo.gameStarted,
+                    currentTurn: roomInfo.currentTurn
                 });
             }
         };
@@ -92,6 +110,7 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
     return {
         roomDetails,
         selectTeamRole,
-        joinError
+        joinError,
+        userDetails  // now contains teamColor and role
     };
 };

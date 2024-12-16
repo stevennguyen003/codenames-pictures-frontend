@@ -20,3 +20,8 @@ export interface GameCard {
     type: 'red' | 'blue' | 'neutral' | 'assassin';
     revealed: boolean;
 }
+
+export interface UserDetails {
+    teamColor: 'red' | 'blue' | 'spectator';
+    role: 'spymaster' | 'operator' | null;
+}

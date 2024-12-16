@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSocket } from '../Contexts/SocketContext';
-import RoomPage from '../Pages/RoomPage';
-import { TeamMember, GameCard, RoomDetails } from '../Interfaces';
+import { RoomDetails } from '../Interfaces';
 
 // Custom hook to handle game logic, specifically board management and score
 export const useGameLogic = (roomCode: string, roomDetails: RoomDetails, socket: any) => {

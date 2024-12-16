@@ -5,6 +5,8 @@ import { useRoomDetails } from "../Hooks/useRoomDetails";
 import { useGameLogic } from "../Hooks/useGameLogic";
 import TeamTracker from "../Components/TeamTracker";
 import NicknameModal from "../Components/NicknameModal";
+import GameGrid from "../Components/GameGrid"; 
+import ClueForm from "../Components/ClueForm";
 
 // Displays a room page
 function RoomPage() {
@@ -16,7 +18,7 @@ function RoomPage() {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     // Use custom hook to fetch room details
-    const { roomDetails, selectTeamRole, joinError } = useRoomDetails(finalRoomCode, nickname);
+    const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
     const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
@@ -64,16 +66,17 @@ function RoomPage() {
             {/* Left Column: Red Team Tracker */}
             <div className="w-1/4">
                 <TeamTracker
+                    nickname={nickname}
                     teamColor="red"
                     teamMembers={roomDetails.teamRed}
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
+                    gameStarted={gameStarted}
                 />
             </div>
 
             {/* Middle Column: Game Content */}
             <div className="w-2/4 flex flex-col items-center">
-                <h1>{nickname}</h1>
                 {!gameStarted ? (
                     <div className="w-full flex flex-col items-center">
                         {canGameStart() ? (
@@ -96,29 +99,13 @@ function RoomPage() {
                     </div>
                 ) : (
                     <div className="w-full flex flex-col items-center justify-center">
-                        <div className="text-center mb-4">
-                            <h2 className="text-xl font-bold">
-                                Current Turn: {roomDetails.currentTurn?.toUpperCase()} Team
-                            </h2>
-                            <div className="grid grid-cols-5 grid-rows-5 gap-2 max-w-screen-sm w-full">
-                                {roomDetails.gameGrid?.map((card, index) => (
-                                    <div
-                                        key={index}
-                                        className={`w-full h-28 bg-gray-200 relative 
-                                            ${card.type === 'red' ? 'border-4 border-red-500' :
-                                                card.type === 'blue' ? 'border-4 border-blue-500' :
-                                                    card.type === 'assassin' ? 'border-4 border-black' :
-                                                        'border-4 border-gray-500'}`}
-                                    >
-                                        <img
-                                            src={`/codenames-cards/${card.image}`}
-                                            alt={`Card ${index + 1}`}
-                                            className="w-full h-full object-cover rounded"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <GameGrid 
+                            gameGrid={roomDetails.gameGrid} 
+                            userDetails={userDetails} 
+                        />
+                        <ClueForm
+                            userDetails={userDetails}
+                        />
                     </div>
                 )}
             </div>
@@ -126,10 +113,12 @@ function RoomPage() {
             {/* Right Column: Blue Team Tracker */}
             <div className="w-1/4">
                 <TeamTracker
+                    nickname={nickname}
                     teamColor="blue"
                     teamMembers={roomDetails.teamBlue}
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
+                    gameStarted={gameStarted}
                 />
             </div>
         </div>

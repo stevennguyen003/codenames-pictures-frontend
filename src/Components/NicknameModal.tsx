@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface NicknameModalProps {
     isVisible: boolean;
@@ -6,7 +6,7 @@ interface NicknameModalProps {
     onClose: () => void;
 }
 
-const NicknameModal: React.FC<NicknameModalProps> = ({ isVisible, onNicknameSubmit, onClose }) => {
+function NicknameModal({ isVisible, onNicknameSubmit, onClose }: NicknameModalProps) {
     const [localNickname, setLocalNickname] = useState<string>("");
     const [error, setError] = useState<string>("");
 
@@ -51,5 +51,4 @@ const NicknameModal: React.FC<NicknameModalProps> = ({ isVisible, onNicknameSubm
         </div>
     );
 };
-
 export default NicknameModal;
