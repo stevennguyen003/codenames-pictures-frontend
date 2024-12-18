@@ -7,7 +7,16 @@ export interface RoomDetails {
     gameStarted: boolean;
     gameGrid?: GameCard[];
     currentTurn?: 'red' | 'blue';
+    currentTurnData?: {
+        currentClue: string;
+        clueNumber: number;
+        correctCardsClicked: number;
+        turnEnded: boolean;
+    } | null;
+    teamRedPoints?: number;
+    teamBluePoints?: number;
 }
+
 
 export interface TeamMember {
     nickname: string;

@@ -3,9 +3,12 @@ import { UserDetails } from '../Interfaces';
 
 interface ClueFormProps {
     userDetails: UserDetails;
+    socket: any;
+    roomCode: string;
+    setClueSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function ClueForm({ userDetails }: ClueFormProps) {
+function ClueForm({ userDetails, socket, roomCode, setClueSubmitted }: ClueFormProps) {
     const [clue, setClue] = useState('');
     const [number, setNumber] = useState<number | string>('');
 
@@ -14,37 +17,64 @@ function ClueForm({ userDetails }: ClueFormProps) {
     };
 
     const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNumber(event.target.value);
+        // Ensure only numbers are entered
+        const value = event.target.value;
+        setNumber(value === '' ? '' : parseInt(value, 10));
     };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Validate inputs
+        if (!clue || number === '') {
+            alert("Please enter both a clue and number");
+            return;
+        }
+
+        // Emit clue submission event
+        if (socket) {
+            socket.emit('submit clue', roomCode, clue, number, (response: any) => {
+                if (response.success) {
+                    setClue('');
+                    setNumber('');
+                    setClueSubmitted(true);
+                    console.log("Clue submitted");
+                } else {
+                    alert(response.error || "Failed to submit clue");
+                }
+            });
+        }
+    }
 
     // If the user is a spymaster, show the input fields for clue and number
     if (userDetails.role === 'spymaster') {
         return (
-            <div className="w-full max-w-md flex flex-row justify-center gap-2 rounded">
-                <input
-                    type="text"
-                    placeholder="Clue"
-                    value={clue}
-                    onChange={handleClueChange}
-                    className="px-4 py-2 border border-gray-300 rounded w-2/3"
-                />
-                <input
-                    type="number"
-                    placeholder="#"
-                    value={number}
-                    onChange={handleNumberChange}
-                    className="px-2 py-1 border border-gray-300 rounded text-sm w-1/6"
-                />
-                <button
-                    onClick={() => {
-                        // Handle clue submission (you can implement this functionality as needed)
-                        console.log('Clue:', clue, 'Number:', number);
-                    }}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm w-1/6"
-                >
-                    Submit
-                </button>
+            <div className="w-full max-w-md flex justify-center rounded">
+                <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
+                    <input
+                        type="text"
+                        placeholder="Clue"
+                        value={clue}
+                        onChange={handleClueChange}
+                        className="px-4 py-1 border border-gray-300 rounded w-2/3 h-10"
+                    />
+                    <input
+                        type="number"
+                        placeholder="#"
+                        min="1"
+                        value={number}
+                        onChange={handleNumberChange}
+                        className="px-4 py-1 border border-gray-300 rounded text-sm w-1/6 h-10"
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 text-sm w-1/6 h-10"
+                    >
+                        Submit
+                    </button>
+                </form>
             </div>
+
         );
     }
 

@@ -9,6 +9,7 @@ interface TeamTrackerProps {
     joinError?: string | null;
     onSelectRole: (teamColor: 'red' | 'blue', roleType: 'operator' | 'spymaster') => Promise<boolean>;
     gameStarted: boolean;
+    teamPoints?: number;
 }
 
 // Team Tracker component as a function declaration
@@ -19,7 +20,8 @@ function TeamTracker({
     onTeamMembersUpdate,
     joinError,
     onSelectRole,
-    gameStarted
+    gameStarted,
+    teamPoints
 }: TeamTrackerProps) {
     // User joining a new role
     const handleJoinTeam = async (roleType: 'operator' | 'spymaster') => {
@@ -57,6 +59,9 @@ function TeamTracker({
         <div className={`p-4 border-2 ${teamColor === 'red' ? 'border-red-500' : 'border-blue-500'} rounded-lg`}>
             <h2 className={`text-xl font-bold mb-4 ${teamColor === 'red' ? 'text-red-600' : 'text-blue-600'}`}>
                 {teamColor.charAt(0).toUpperCase() + teamColor.slice(1)} Team
+                {teamPoints !== undefined && (
+                    <span className="ml-2 text-lg font-semibold">{teamPoints}</span>
+                )}
             </h2>
 
             {/* Error Message */}

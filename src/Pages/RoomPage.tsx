@@ -5,7 +5,7 @@ import { useRoomDetails } from "../Hooks/useRoomDetails";
 import { useGameLogic } from "../Hooks/useGameLogic";
 import TeamTracker from "../Components/TeamTracker";
 import NicknameModal from "../Components/NicknameModal";
-import GameGrid from "../Components/GameGrid"; 
+import GameGrid from "../Components/GameGrid";
 import ClueForm from "../Components/ClueForm";
 
 // Displays a room page
@@ -20,7 +20,7 @@ function RoomPage() {
     // Use custom hook to fetch room details
     const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
-    const { canGameStart, startGame, gameStarted } = useGameLogic(finalRoomCode, roomDetails, socket);
+    const { canGameStart, startGame, gameStarted, handleCardClick, clueSubmitted, setClueSubmitted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
@@ -72,6 +72,7 @@ function RoomPage() {
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
                     gameStarted={gameStarted}
+                    teamPoints={roomDetails.teamRedPoints}
                 />
             </div>
 
@@ -99,13 +100,20 @@ function RoomPage() {
                     </div>
                 ) : (
                     <div className="w-full flex flex-col items-center justify-center">
-                        <GameGrid 
-                            gameGrid={roomDetails.gameGrid} 
-                            userDetails={userDetails} 
-                        />
-                        <ClueForm
+                        <GameGrid
+                            gameGrid={roomDetails.gameGrid}
                             userDetails={userDetails}
+                            clueSubmitted={clueSubmitted}
+                            handleCardClick={handleCardClick}
                         />
+                        {!clueSubmitted &&
+                            <ClueForm
+                                userDetails={userDetails}
+                                socket={socket}
+                                roomCode={finalRoomCode}
+                                setClueSubmitted={setClueSubmitted}
+                            />
+                        }
                     </div>
                 )}
             </div>
@@ -119,6 +127,7 @@ function RoomPage() {
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
                     gameStarted={gameStarted}
+                    teamPoints={roomDetails.teamBluePoints}
                 />
             </div>
         </div>
