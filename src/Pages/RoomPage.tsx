@@ -7,6 +7,7 @@ import TeamTracker from "../Components/TeamTracker";
 import NicknameModal from "../Components/NicknameModal";
 import GameGrid from "../Components/GameGrid";
 import ClueForm from "../Components/ClueForm";
+import ClueAlert from "../Components/ClueAlert";
 
 // Displays a room page
 function RoomPage() {
@@ -132,6 +133,13 @@ function RoomPage() {
                     teamPoints={roomDetails.teamBluePoints}
                 />
             </div>
+
+            {/* Popup on Clue Submission */}
+            {clueSubmitted && 
+                <ClueAlert 
+                    currentTurnData={roomDetails.currentTurnData}                
+                />
+            }
         </div>
     );
 }

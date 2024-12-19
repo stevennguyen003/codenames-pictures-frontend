@@ -18,7 +18,7 @@ function NicknameModal({ isVisible, onNicknameSubmit, onClose }: NicknameModalPr
             setError("Nickname cannot be empty.");
         }
     };
-
+    
     if (!isVisible) return null;
 
     return (

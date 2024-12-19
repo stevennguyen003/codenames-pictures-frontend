@@ -14,7 +14,6 @@ export const setupSocketListeners = (socket: Socket, sessionId: string) => {
         console.log('Socket disconnected');
     });
 
-
     return () => {
         socket.off('connect');
         socket.off('disconnect');

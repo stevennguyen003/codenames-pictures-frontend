@@ -8,6 +8,7 @@ export interface RoomDetails {
     gameGrid?: GameCard[];
     currentTurn?: 'red' | 'blue';
     currentTurnData?: {
+        team: string;
         currentClue: string;
         clueNumber: number;
         correctCardsClicked: number;
