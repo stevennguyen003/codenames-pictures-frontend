@@ -5,10 +5,11 @@ interface ClueFormProps {
     userDetails: UserDetails;
     socket: any;
     roomCode: string;
+    clueSubmitted: boolean;
     setClueSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function ClueForm({ userDetails, socket, roomCode, setClueSubmitted }: ClueFormProps) {
+function ClueForm({ userDetails, socket, roomCode, clueSubmitted, setClueSubmitted }: ClueFormProps) {
     const [clue, setClue] = useState('');
     const [number, setNumber] = useState<number | string>('');
 

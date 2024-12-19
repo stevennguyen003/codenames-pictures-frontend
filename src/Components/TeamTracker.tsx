@@ -59,7 +59,7 @@ function TeamTracker({
         <div className={`p-4 border-2 ${teamColor === 'red' ? 'border-red-500' : 'border-blue-500'} rounded-lg`}>
             <h2 className={`text-xl font-bold mb-4 ${teamColor === 'red' ? 'text-red-600' : 'text-blue-600'}`}>
                 {teamColor.charAt(0).toUpperCase() + teamColor.slice(1)} Team
-                {teamPoints !== undefined && (
+                {teamPoints !== null && (
                     <span className="ml-2 text-lg font-semibold">{teamPoints}</span>
                 )}
             </h2>

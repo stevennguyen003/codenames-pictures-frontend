@@ -37,7 +37,7 @@ function GameGrid({ gameGrid, userDetails, clueSubmitted, handleCardClick }: Gam
                         )}
 
                         {/* Icon that allows operators to select the card */}
-                        {clueSubmitted &&
+                        {clueSubmitted && userDetails.role !== 'spymaster' &&
                             <div
                                 className="absolute top-2 right-2 text-2xl text-black"
                                 onClick={() => handleCardClick(index)}>

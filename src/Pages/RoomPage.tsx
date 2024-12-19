@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSocket } from "../Contexts/SocketContext";
+import { useSocket } from "../Hooks/useSocket";
 import { useRoomDetails } from "../Hooks/useRoomDetails";
 import { useGameLogic } from "../Hooks/useGameLogic";
 import TeamTracker from "../Components/TeamTracker";
@@ -10,16 +10,17 @@ import ClueForm from "../Components/ClueForm";
 
 // Displays a room page
 function RoomPage() {
+    const { socket } = useSocket();
     const navigate = useNavigate();
     const { roomCode } = useParams();
     const finalRoomCode = roomCode ?? "invalid";
-    const { socket } = useSocket();
     const [nickname, setNickname] = useState<string>("");
     const [showModal, setShowModal] = useState<boolean>(false);
 
-    // Use custom hook to fetch room details
+    // Use custom hooks to fetch details
     const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
+
     const { canGameStart, startGame, gameStarted, handleCardClick, clueSubmitted, setClueSubmitted } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
@@ -111,6 +112,7 @@ function RoomPage() {
                                 userDetails={userDetails}
                                 socket={socket}
                                 roomCode={finalRoomCode}
+                                clueSubmitted={clueSubmitted}
                                 setClueSubmitted={setClueSubmitted}
                             />
                         }

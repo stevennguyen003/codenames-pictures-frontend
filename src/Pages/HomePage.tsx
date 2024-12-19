@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../Contexts/SocketContext";
+import { useSocket } from "../Hooks/useSocket";
 
 function HomePage() {
     const [nickname, setNickname] = useState<string>("");

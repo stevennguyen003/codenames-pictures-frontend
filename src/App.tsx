@@ -2,7 +2,7 @@ import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import RoomPage from './Pages/RoomPage';
-import { SocketProvider } from './Contexts/SocketContext';
+import { SocketProvider } from './Components/SocketContext/SocketProvider';
 
 function App() {
 
