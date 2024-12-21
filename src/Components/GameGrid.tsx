@@ -1,16 +1,16 @@
 import { FaArrowAltCircleDown } from "react-icons/fa";
-import { GameCard, UserDetails } from '../Interfaces';
+import { GameCard, TurnData, UserDetails } from '../Interfaces';
 
 // Props Interface
 interface GameGridProps {
     gameGrid?: GameCard[];
     userDetails: UserDetails;
-    clueSubmitted: boolean;
+    currentTurnData: TurnData | null
     handleCardClick: (cardIndex: number) => void;
 }
 
 // Represents the grid of cards for a game
-function GameGrid({ gameGrid, userDetails, clueSubmitted, handleCardClick }: GameGridProps) {
+function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: GameGridProps) {
     if (!gameGrid) return null;
 
     return (
@@ -37,7 +37,7 @@ function GameGrid({ gameGrid, userDetails, clueSubmitted, handleCardClick }: Gam
                         )}
 
                         {/* Icon that allows operators to select the card */}
-                        {clueSubmitted && userDetails.role !== 'spymaster' &&
+                        {currentTurnData?.clueNumber && userDetails.role !== 'spymaster' &&
                             <div
                                 className="absolute top-2 right-2 text-2xl text-black"
                                 onClick={() => handleCardClick(index)}>

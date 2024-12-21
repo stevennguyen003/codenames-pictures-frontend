@@ -1,3 +1,13 @@
+export type Team = 'red' | 'blue';
+
+export interface TurnData {
+    team: Team;
+    currentClue: string;
+    clueNumber: number;
+    correctCardsClicked: number;
+    turnEnded: boolean;
+}
+
 export interface RoomDetails {
     gameLog: any[];
     users: any[];
@@ -6,14 +16,8 @@ export interface RoomDetails {
     teamBlue: TeamMember[];
     gameStarted: boolean;
     gameGrid?: GameCard[];
-    currentTurn?: 'red' | 'blue';
-    currentTurnData?: {
-        team: string;
-        currentClue: string;
-        clueNumber: number;
-        correctCardsClicked: number;
-        turnEnded: boolean;
-    } | null;
+    currentTurn?: Team;
+    currentTurnData?: TurnData | null;
     teamRedPoints?: number;
     teamBluePoints?: number;
 }

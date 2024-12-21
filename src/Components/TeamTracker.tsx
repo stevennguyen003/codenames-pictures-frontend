@@ -1,4 +1,4 @@
-import { TeamMember } from '../Interfaces';
+import { TeamMember, TurnData } from '../Interfaces';
 
 // Props interface
 interface TeamTrackerProps {
@@ -8,7 +8,7 @@ interface TeamTrackerProps {
     onTeamMembersUpdate?: (members: TeamMember[]) => void;
     joinError?: string | null;
     onSelectRole: (teamColor: 'red' | 'blue', roleType: 'operator' | 'spymaster') => Promise<boolean>;
-    gameStarted: boolean;
+    currentTurnData: TurnData | null;
     teamPoints?: number;
 }
 
@@ -20,7 +20,7 @@ function TeamTracker({
     onTeamMembersUpdate,
     joinError,
     onSelectRole,
-    gameStarted,
+    currentTurnData,
     teamPoints
 }: TeamTrackerProps) {
     // User joining a new role
@@ -36,7 +36,7 @@ function TeamTracker({
         return members.map((member) => (
             <li
                 key={member.id}
-                className={`inline-block mb-1 mr-2 px-4 py-1 rounded-md ${
+                className={`inline-block mb-1 mr-2 px-4 py-1 rounded-md border-2 border-${teamColor}-500 ${
                     member.nickname === nickname
                         ? teamColor === 'red'
                             ? 'bg-red-500 text-white' // Current user's bubble in red
@@ -55,8 +55,15 @@ function TeamTracker({
     const operators = teamMembers.filter(member => member.role === 'operator');
     const spymasters = teamMembers.filter(member => member.role === 'spymaster');
 
+    // Determine the background color class based on currentTurnData and teamColor
+    const bgColorClass = currentTurnData && currentTurnData.team === teamColor 
+        ? teamColor === 'red' 
+            ? 'bg-red-100' 
+            : 'bg-blue-100' 
+        : '';
+
     return (
-        <div className={`p-4 border-2 ${teamColor === 'red' ? 'border-red-500' : 'border-blue-500'} rounded-lg`}>
+        <div className={`p-4 border-2 ${teamColor === 'red' ? 'border-red-500' : 'border-blue-500'} rounded-lg ${bgColorClass}`}>
             <h2 className={`text-xl font-bold mb-4 ${teamColor === 'red' ? 'text-red-600' : 'text-blue-600'}`}>
                 {teamColor.charAt(0).toUpperCase() + teamColor.slice(1)} Team
                 {teamPoints !== null && (
@@ -72,7 +79,7 @@ function TeamTracker({
             )}
 
             {/* Buttons to Join Teams */}
-            {!gameStarted && (
+            {!currentTurnData && (
                 <div className="flex space-x-2 mb-4">
                     <button
                         onClick={() => handleJoinTeam('operator')}

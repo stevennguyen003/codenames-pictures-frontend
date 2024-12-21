@@ -24,7 +24,8 @@ export const setupGameListeners = (
     const handleCardReveal = (gameData: any) => {
         updateGameState({
             teamRedPoints: gameData.teamRedPoints,
-            teamBluePoints: gameData.teamBluePoints
+            teamBluePoints: gameData.teamBluePoints,
+            currentTurnData: gameData.currentTurnData
         });
     };
 

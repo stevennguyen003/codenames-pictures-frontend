@@ -4,10 +4,9 @@ import { useSocket } from "../Hooks/useSocket";
 import { useRoomDetails } from "../Hooks/useRoomDetails";
 import { useGameLogic } from "../Hooks/useGameLogic";
 import TeamTracker from "../Components/TeamTracker";
-import NicknameModal from "../Components/NicknameModal";
 import GameGrid from "../Components/GameGrid";
 import ClueForm from "../Components/ClueForm";
-import ClueAlert from "../Components/ClueAlert";
+import NicknameModal from "../Components/NicknameModal";
 
 // Displays a room page
 function RoomPage() {
@@ -22,7 +21,7 @@ function RoomPage() {
     const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
 
-    const { canGameStart, startGame, gameStarted, handleCardClick, clueSubmitted, setClueSubmitted } = useGameLogic(finalRoomCode, roomDetails, socket);
+    const { canGameStart, startGame, gameStarted, handleCardClick, currentTurnData} = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
@@ -73,7 +72,7 @@ function RoomPage() {
                     teamMembers={roomDetails.teamRed}
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
-                    gameStarted={gameStarted}
+                    currentTurnData={currentTurnData}
                     teamPoints={roomDetails.teamRedPoints}
                 />
             </div>
@@ -105,16 +104,15 @@ function RoomPage() {
                         <GameGrid
                             gameGrid={roomDetails.gameGrid}
                             userDetails={userDetails}
-                            clueSubmitted={clueSubmitted}
+                            currentTurnData={currentTurnData}
                             handleCardClick={handleCardClick}
                         />
-                        {!clueSubmitted &&
+                        {currentTurnData &&
                             <ClueForm
                                 userDetails={userDetails}
                                 socket={socket}
                                 roomCode={finalRoomCode}
-                                clueSubmitted={clueSubmitted}
-                                setClueSubmitted={setClueSubmitted}
+                                currentTurnData={currentTurnData}
                             />
                         }
                     </div>
@@ -129,17 +127,10 @@ function RoomPage() {
                     teamMembers={roomDetails.teamBlue}
                     onSelectRole={selectTeamRole}
                     joinError={joinError}
-                    gameStarted={gameStarted}
+                    currentTurnData={currentTurnData}
                     teamPoints={roomDetails.teamBluePoints}
                 />
             </div>
-
-            {/* Popup on Clue Submission */}
-            {clueSubmitted && 
-                <ClueAlert 
-                    currentTurnData={roomDetails.currentTurnData}                
-                />
-            }
         </div>
     );
 }

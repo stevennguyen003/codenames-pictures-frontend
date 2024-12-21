@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSocket } from './useSocket';
-import { RoomDetails, UserDetails } from '../Interfaces';
+import { RoomDetails, UserDetails, TeamMember, Team } from '../Interfaces';
 import { setupRoomListeners } from '../Sockets/Listeners/roomListeners';
 import { roomEmitters } from '../Sockets/Emitters/roomEmitters';
 
@@ -17,30 +17,32 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         gameStarted: false
     });
 
+    // Error handling
     const [joinError, setJoinError] = useState<string | null>(null);
+    // User details for props
     const [userDetails, setUserDetails] = useState<UserDetails>({
         teamColor: 'spectator',
         role: null
     });
 
-    // Updating room details
+    // Updating the room details
     const updateRoomDetails = useCallback((details: Partial<RoomDetails>) => {
         setRoomDetails(prev => ({ ...prev, ...details }));
     }, []);
 
-    // Selecting a team role
+    // Selecting a new role
     const selectTeamRole = useCallback(async (
-        teamColor: 'red' | 'blue', 
+        teamColor: Team,
         roleType: 'operator' | 'spymaster'
     ) => {
         if (!socket) { throw new Error('Socket not connected'); }
 
         try {
             const response = await roomEmitters.selectRole(
-                socket, 
-                roomCode, 
-                nickname, 
-                teamColor, 
+                socket,
+                roomCode,
+                nickname,
+                teamColor,
                 roleType
             );
             if (response.success) {
@@ -60,42 +62,40 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
     useEffect(() => {
         if (!socket || !roomCode) return;
 
-        // Joining a room, will create a room if not found
+        // Initializing the room on connection, will create new room if not found
         const initializeRoom = async () => {
             try {
                 const { gameLog, roomInfo } = await roomEmitters.joinRoom(
-                    socket, 
-                    roomCode, 
+                    socket,
+                    roomCode,
                     nickname
                 );
 
                 if (roomInfo.success) {
-                    // Update user details based on team
                     const userInTeamRed = roomInfo.teamRed.find(
-                        (member: any) => member.nickname === nickname
+                        (member: TeamMember) => member.nickname === nickname
                     );
                     const userInTeamBlue = roomInfo.teamBlue.find(
-                        (member: any) => member.nickname === nickname
+                        (member: TeamMember) => member.nickname === nickname
                     );
 
                     if (userInTeamRed) {
-                        setUserDetails({ 
-                            teamColor: 'red', 
-                            role: userInTeamRed.role 
+                        setUserDetails({
+                            teamColor: 'red',
+                            role: userInTeamRed.role
                         });
                     } else if (userInTeamBlue) {
-                        setUserDetails({ 
-                            teamColor: 'blue', 
-                            role: userInTeamBlue.role 
+                        setUserDetails({
+                            teamColor: 'blue',
+                            role: userInTeamBlue.role
                         });
                     } else {
-                        setUserDetails({ 
-                            teamColor: 'spectator', 
-                            role: null 
+                        setUserDetails({
+                            teamColor: 'spectator',
+                            role: null
                         });
                     }
-                    
-                    // Update room details
+
                     updateRoomDetails({
                         gameLog: gameLog || [],
                         users: roomInfo.users || [],
@@ -104,7 +104,6 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
                         teamBlue: roomInfo.teamBlue || [],
                         gameGrid: roomInfo.gameGrid || [],
                         gameStarted: roomInfo.gameStarted,
-                        currentTurn: roomInfo.currentTurn,
                         currentTurnData: roomInfo.currentTurnData,
                         teamRedPoints: roomInfo.teamRedPoints,
                         teamBluePoints: roomInfo.teamBluePoints
@@ -116,10 +115,10 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
             }
         };
 
-        // Set up room listeners
+        // Cleaning up listeners
         const cleanup = setupRoomListeners(
-            socket, 
-            updateRoomDetails, 
+            socket,
+            updateRoomDetails,
             setUserDetails,
             nickname
         );

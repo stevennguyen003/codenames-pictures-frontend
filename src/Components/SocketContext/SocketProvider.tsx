@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import SocketContext from './SocketContext';
