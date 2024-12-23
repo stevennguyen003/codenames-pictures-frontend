@@ -1,16 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Socket } from 'socket.io-client';
-import { RoomDetails, TurnData } from '../Interfaces';
+import { RoomDetails, GameState } from '../Interfaces';
 import { gameEmitters } from '../Sockets/Emitters/gameEmitters';
 import { setupGameListeners } from '../Sockets/Listeners/gameListeners';
-
-// interface for a game state
-interface GameState {
-    gameStarted: boolean;
-    teamRedPoints: number;
-    teamBluePoints: number;
-    currentTurnData: TurnData | null;
-}
 
 // Hook for game logic
 export const useGameLogic = (
@@ -72,6 +64,20 @@ export const useGameLogic = (
         }
     }, [socket, canGameStart, roomCode]);
 
+    // Resetting a game
+    const resetGame = useCallback(async () => {
+        if (!socket) return;
+
+        try {
+            const response = await gameEmitters.resetGame(socket, roomCode);
+            if (!response.success) {
+                console.error("Game reset failed:", response.error);
+            }
+        } catch (error) {
+            console.error("Error resetting game:", error);
+        }
+    }, [socket, roomCode]);
+
     // Handling card selection
     const handleCardClick = useCallback(async (cardIndex: number) => {
         if (!socket || !gameState.gameStarted) return;
@@ -91,6 +97,7 @@ export const useGameLogic = (
         startGame,
         gameStarted: gameState.gameStarted,
         handleCardClick,
+        resetGame,
         teamRedPoints: gameState.teamRedPoints,
         teamBluePoints: gameState.teamBluePoints,
         currentTurnData: gameState.currentTurnData

@@ -1,11 +1,5 @@
 import { Socket } from "socket.io-client";
-
-export interface GameState {
-    gameStarted: boolean;
-    teamRedPoints: number;
-    teamBluePoints: number;
-    currentTurnData: any;
-}
+import { GameState } from "../../Interfaces";
 
 // Handles game listeners
 export const setupGameListeners = (
@@ -17,8 +11,19 @@ export const setupGameListeners = (
     const handleGameStart = (gameData: any) => {
         updateGameState({
             gameStarted: true,
+            teamRedPoints: gameData.teamRedPoints,
+            teamBluePoints: gameData.teamBluePoints,
         });
     };
+
+    const handleResetGame = (gameData: any) => {
+        updateGameState({
+            gameStarted: false,
+            teamRedPoints: null,
+            teamBluePoints: null,
+            currentTurnData: null
+        });
+    }
 
     // Revealing a card
     const handleCardReveal = (gameData: any) => {
@@ -37,11 +42,13 @@ export const setupGameListeners = (
     };
 
     socket.on('game started', handleGameStart);
+    socket.on('reset game', handleResetGame);
     socket.on('card revealed', handleCardReveal);
     socket.on('clue submitted', handleClueUpdate);
 
     return () => {
         socket.off('game started', handleGameStart);
+        socket.off('reset game', handleResetGame);
         socket.off('card revealed', handleCardReveal);
         socket.off('clue submitted', handleClueUpdate);
     };

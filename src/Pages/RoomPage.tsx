@@ -21,7 +21,7 @@ function RoomPage() {
     const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
 
-    const { canGameStart, startGame, gameStarted, handleCardClick, currentTurnData} = useGameLogic(finalRoomCode, roomDetails, socket);
+    const { canGameStart, startGame, gameStarted, resetGame, handleCardClick, currentTurnData} = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
@@ -130,6 +130,7 @@ function RoomPage() {
                     currentTurnData={currentTurnData}
                     teamPoints={roomDetails.teamBluePoints}
                 />
+                <button onClick={resetGame}>Reset Game</button>
             </div>
         </div>
     );

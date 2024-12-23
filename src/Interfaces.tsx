@@ -16,10 +16,17 @@ export interface RoomDetails {
     teamBlue: TeamMember[];
     gameStarted: boolean;
     gameGrid?: GameCard[];
-    currentTurn?: Team;
+    currentTurn: Team | null;
     currentTurnData?: TurnData | null;
-    teamRedPoints?: number;
-    teamBluePoints?: number;
+    teamRedPoints: number | null;
+    teamBluePoints: number | null;
+}
+
+export interface GameState {
+    gameStarted: boolean;
+    teamRedPoints: number | null;
+    teamBluePoints: number | null;
+    currentTurnData: TurnData | null;
 }
 
 

@@ -2,10 +2,10 @@ import { Socket } from 'socket.io-client';
 
 // Represents game emitters
 export const gameEmitters = {
-    
+
     // Starting a game
     startGame: (
-        socket: Socket, 
+        socket: Socket,
         roomCode: string
     ): Promise<{ success: boolean, error?: string }> => {
         return new Promise((resolve) => {
@@ -15,10 +15,22 @@ export const gameEmitters = {
         });
     },
 
+    // Resetting a game
+    resetGame: (
+        socket: Socket,
+        roomCode: string
+    ): Promise<{ success: boolean, error?: string }> => {
+        return new Promise((resolve) => {
+            socket.emit('reset game', roomCode, (response: any) => {
+                resolve(response);
+            });
+        });
+    },
+
     // Card selection
     clickCard: (
-        socket: Socket, 
-        roomCode: string, 
+        socket: Socket,
+        roomCode: string,
         cardIndex: number
     ): Promise<{ success: boolean, error?: string }> => {
         return new Promise((resolve) => {

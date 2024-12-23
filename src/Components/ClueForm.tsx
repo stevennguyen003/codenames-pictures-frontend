@@ -46,8 +46,6 @@ function ClueForm({ userDetails, socket, roomCode, currentTurnData }: ClueFormPr
         }
     }
 
-    const teamColorClass = userDetails.teamColor === 'red' ? 'text-red-500' : 'text-blue-500';
-
     // If there's a current clue, show it
     if (currentTurnData.currentClue) {
         return (

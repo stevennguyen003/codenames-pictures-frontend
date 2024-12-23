@@ -14,7 +14,11 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         teamRed: [],
         teamBlue: [],
         gameGrid: [],
-        gameStarted: false
+        gameStarted: false,
+        currentTurn: null,
+        currentTurnData: null,
+        teamRedPoints: null,
+        teamBluePoints: null
     });
 
     // Error handling
