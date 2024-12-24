@@ -4,6 +4,7 @@ import { GiBattleship } from "react-icons/gi";
 import { GiJetFighter } from "react-icons/gi";
 import { GiSheep } from "react-icons/gi";
 
+// Props for the game grid component
 interface GameGridProps {
     gameGrid?: GameCard[];
     userDetails: UserDetails;
@@ -11,16 +12,22 @@ interface GameGridProps {
     handleCardClick: (cardIndex: number) => void;
 }
 
+// Game grid component
 function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: GameGridProps) {
     if (!gameGrid) return null;
 
+    // Custom color palette
+    const redColor = '#B22222';
+    const blueColor = '#4169E1';
+
+    // Get the card style based on the card type, user role, and whether it's revealed
     const getCardStyle = (card: GameCard) => {
         if (card.revealed) {
             switch (card.type) {
                 case 'red':
-                    return 'border-4 border-red-500';
+                    return `border-4 border-[${redColor}]`;
                 case 'blue':
-                    return 'border-4 border-blue-500';
+                    return `border-4 border-[${blueColor}]`;
                 case 'assassin':
                     return 'border-4 border-black';
                 default:
@@ -30,9 +37,9 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
         if (userDetails.role === 'spymaster') {
             switch (card.type) {
                 case 'red':
-                    return 'border-4 border-red-500';
+                    return `border-4 border-[${redColor}]`;
                 case 'blue':
-                    return 'border-4 border-blue-500';
+                    return `border-4 border-[${blueColor}]`;
                 case 'assassin':
                     return 'border-4 border-black';
                 default:
@@ -42,13 +49,14 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
         return 'bg-gray-200';
     };
 
+    // Handling overlay color for revealed cards
     const getOverlayColor = (card: GameCard) => {
         if (card.revealed) {
             switch (card.type) {
                 case 'red':
-                    return 'bg-red-500';
+                    return `bg-[${redColor}]`;
                 case 'blue':
-                    return 'bg-blue-500';
+                    return `bg-[${blueColor}]`;
                 case 'assassin':
                     return 'bg-black';
                 default:
@@ -58,6 +66,7 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
         return '';
     };
 
+    // Handling overlay icon for revealed cards
     const getCardIcon = (card: GameCard) => {
         if (!card.revealed) return null;
         
