@@ -58,7 +58,7 @@ function ClueForm({ userDetails, socket, roomCode, currentTurnData }: ClueFormPr
     }
 
     // If user is spymaster and it's their team's turn, show the input form
-    if (userDetails.role === 'spymaster' && currentTurnData.team === userDetails.teamColor) {
+    if (userDetails.role === 'spymaster' && currentTurnData.currentTurn === userDetails.teamColor) {
         return (
             <div className="w-full max-w-md flex justify-center rounded">
                 <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
@@ -91,7 +91,7 @@ function ClueForm({ userDetails, socket, roomCode, currentTurnData }: ClueFormPr
     // Default waiting state
     return (
         <div className="w-full flex flex-col items-center justify-center">
-            {userDetails.teamColor === currentTurnData.team ? (
+            {userDetails.teamColor === currentTurnData.currentTurn ? (
                 <p className="text-lg text-black">Waiting for your spymaster to give a clue</p>
             ) : (
                 <p className="text-lg text-black">Waiting for enemy spymaster to give a clue</p>

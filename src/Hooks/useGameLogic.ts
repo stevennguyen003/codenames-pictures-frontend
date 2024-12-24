@@ -87,6 +87,7 @@ export const useGameLogic = (
             if (!response.success) {
                 console.error("Card click failed:", response.error);
             }
+            console.log(response);
         } catch (error) {
             console.error("Error handling card click:", error);
         }

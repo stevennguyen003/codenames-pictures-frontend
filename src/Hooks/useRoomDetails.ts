@@ -15,14 +15,11 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         teamBlue: [],
         gameGrid: [],
         gameStarted: false,
-        currentTurn: null,
         currentTurnData: null,
         teamRedPoints: null,
         teamBluePoints: null
     });
 
-    // Error handling
-    const [joinError, setJoinError] = useState<string | null>(null);
     // User details for props
     const [userDetails, setUserDetails] = useState<UserDetails>({
         teamColor: 'spectator',
@@ -51,14 +48,13 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
             );
             if (response.success) {
                 setUserDetails({ teamColor, role: roleType });
-                setJoinError(null);
                 return true;
             } else {
-                setJoinError(response.error || 'Failed to join team');
+                console.error(response.error || 'Failed to join team');
                 return false;
             }
         } catch (error) {
-            setJoinError('Failed to join team');
+            console.error('Failed to join team', error);
             return false;
         }
     }, [socket, roomCode, nickname]);
@@ -115,7 +111,6 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
                 }
             } catch (error) {
                 console.error('Failed to join room:', error);
-                setJoinError('Failed to join room');
             }
         };
 
@@ -137,7 +132,6 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
     return {
         roomDetails,
         selectTeamRole,
-        joinError,
         userDetails
     };
 };

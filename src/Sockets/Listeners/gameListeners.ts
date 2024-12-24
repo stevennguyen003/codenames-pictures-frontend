@@ -8,15 +8,18 @@ export const setupGameListeners = (
 ) => {
 
     // Starting a game
-    const handleGameStart = (gameData: any) => {
+    const handleGameStart = (data: any) => {
+        console.log("Game Started: ", data);
         updateGameState({
             gameStarted: true,
-            teamRedPoints: gameData.teamRedPoints,
-            teamBluePoints: gameData.teamBluePoints,
+            currentTurnData: data.currentTurnData,
+            teamRedPoints: data.teamRedPoints,
+            teamBluePoints: data.teamBluePoints,
         });
     };
 
-    const handleResetGame = (gameData: any) => {
+    const handleResetGame = (data: any) => {
+        console.log("Game Reset: ", data);
         updateGameState({
             gameStarted: false,
             teamRedPoints: null,
@@ -26,30 +29,32 @@ export const setupGameListeners = (
     }
 
     // Revealing a card
-    const handleCardReveal = (gameData: any) => {
+    const handleCardReveal = (data: any) => {
+        console.log("Card revealed: ", data);
         updateGameState({
-            teamRedPoints: gameData.teamRedPoints,
-            teamBluePoints: gameData.teamBluePoints,
-            currentTurnData: gameData.currentTurnData
+            teamRedPoints: data.teamRedPoints,
+            teamBluePoints: data.teamBluePoints,
+            currentTurnData: data.currentTurnData
         });
     };
 
     // Submitting a clue
-    const handleClueUpdate = (turnData: any) => {
+    const handleClueSubmission = (data: any) => {
+        console.log("Clue submitted: ", data);
         updateGameState({
-            currentTurnData: turnData
+            currentTurnData: data.currentTurnData
         });
     };
 
     socket.on('game started', handleGameStart);
     socket.on('reset game', handleResetGame);
     socket.on('card revealed', handleCardReveal);
-    socket.on('clue submitted', handleClueUpdate);
+    socket.on('clue submitted', handleClueSubmission);
 
     return () => {
         socket.off('game started', handleGameStart);
         socket.off('reset game', handleResetGame);
         socket.off('card revealed', handleCardReveal);
-        socket.off('clue submitted', handleClueUpdate);
+        socket.off('clue submitted', handleClueSubmission);
     };
 };

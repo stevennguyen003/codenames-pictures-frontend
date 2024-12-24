@@ -1,7 +1,7 @@
 export type Team = 'red' | 'blue';
 
 export interface TurnData {
-    team: Team;
+    currentTurn: Team;
     currentClue: string;
     clueNumber: number;
     correctCardsClicked: number;
@@ -16,7 +16,6 @@ export interface RoomDetails {
     teamBlue: TeamMember[];
     gameStarted: boolean;
     gameGrid?: GameCard[];
-    currentTurn: Team | null;
     currentTurnData?: TurnData | null;
     teamRedPoints: number | null;
     teamBluePoints: number | null;

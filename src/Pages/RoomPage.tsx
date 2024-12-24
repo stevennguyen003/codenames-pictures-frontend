@@ -18,7 +18,7 @@ function RoomPage() {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     // Use custom hooks to fetch details
-    const { roomDetails, selectTeamRole, joinError, userDetails } = useRoomDetails(finalRoomCode, nickname);
+    const { roomDetails, selectTeamRole, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
 
     const { canGameStart, startGame, gameStarted, resetGame, handleCardClick, currentTurnData} = useGameLogic(finalRoomCode, roomDetails, socket);
@@ -71,7 +71,6 @@ function RoomPage() {
                     teamColor="red"
                     teamMembers={roomDetails.teamRed}
                     onSelectRole={selectTeamRole}
-                    joinError={joinError}
                     currentTurnData={currentTurnData}
                     teamPoints={roomDetails.teamRedPoints}
                 />
@@ -126,7 +125,6 @@ function RoomPage() {
                     teamColor="blue"
                     teamMembers={roomDetails.teamBlue}
                     onSelectRole={selectTeamRole}
-                    joinError={joinError}
                     currentTurnData={currentTurnData}
                     teamPoints={roomDetails.teamBluePoints}
                 />

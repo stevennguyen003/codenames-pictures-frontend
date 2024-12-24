@@ -5,7 +5,6 @@ interface TeamTrackerProps {
     teamColor: 'red' | 'blue';
     teamMembers: TeamMember[];
     onTeamMembersUpdate?: (members: TeamMember[]) => void;
-    joinError?: string | null;
     onSelectRole: (teamColor: 'red' | 'blue', roleType: 'operator' | 'spymaster') => Promise<boolean>;
     currentTurnData: TurnData | null;
     teamPoints: number | null;
@@ -16,7 +15,6 @@ function TeamTracker({
     teamColor,
     teamMembers,
     onTeamMembersUpdate,
-    joinError,
     onSelectRole,
     currentTurnData,
     teamPoints
@@ -32,7 +30,7 @@ function TeamTracker({
         return members.map((member) => (
             <li
                 key={member.id}
-                className={`inline-block mb-1 mr-2 px-2 py-0.5 rounded-md border-2 border-white text-white
+                className={`inline-block mb-1 mr-2 px-2 py-0 rounded-md border-2 border-white text-white
                     ${member.nickname === nickname ? 'font-bold' : 'font-normal'}`}
             >
                 {member.nickname}
@@ -44,8 +42,9 @@ function TeamTracker({
     const spymasters = teamMembers.filter(member => member.role === 'spymaster');
 
     // Custom colors
-    const backgroundColor = teamColor === 'red' ? '#BC3D41' : '#4F7EDB';
-    const buttonColor = '#E8D5B5';  // Warm beige that complements both red and blue
+    const backgroundColor = teamColor === 'red' ? '#B22222' : '#4169E1';
+    const buttonColor = '#C7B299';
+    const titleColor = teamColor === 'red' ? '#FF7F7F' : '#ADD8E6'; 
 
     return (
         <div 
@@ -61,21 +60,16 @@ function TeamTracker({
                 )}
             </h2>
 
-            {joinError && (
-                <div className="text-red-200 mb-4 p-2 bg-red-900/50 rounded">
-                    {joinError}
-                </div>
-            )}
-
             {!currentTurnData && (
-                <div className="flex space-x-2 mb-4">
+                <div className="flex justify-center space-x-2 mb-4">
                     <button
                         onClick={() => handleJoinTeam('operator')}
                         className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105"
                         style={{ 
                             backgroundColor: buttonColor,
-                            color: '#333333',  // Dark text for contrast on beige
-                            transition: 'all 0.2s ease'
+                            color: 'white',
+                            transition: 'all 0.2s ease',
+                            fontWeight: 500
                         }}
                     >
                         Join as Operative
@@ -85,8 +79,9 @@ function TeamTracker({
                         className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105"
                         style={{ 
                             backgroundColor: buttonColor,
-                            color: '#333333',  // Dark text for contrast on beige
-                            transition: 'all 0.2s ease'
+                            color: 'white',
+                            transition: 'all 0.2s ease',
+                            fontWeight: 500
                         }}
                     >
                         Join as Spymaster
@@ -95,7 +90,7 @@ function TeamTracker({
             )}
 
             <div>
-                <h3 className="font-semibold mb-2 text-white/90">Spymaster:</h3>
+                <h3 className="font-semibold mb-2" style={{ color: titleColor }}>Spymaster:</h3>
                 {spymasters.length === 0 ? (
                     <p className="text-white/60 mb-4">No spymaster assigned</p>
                 ) : (
@@ -104,7 +99,7 @@ function TeamTracker({
                     </ul>
                 )}
 
-                <h3 className="font-semibold mb-2 text-white/90">Operatives:</h3>
+                <h3 className="font-semibold mb-2" style={{ color: titleColor }}>Operatives:</h3>
                 {operators.length === 0 ? (
                     <p className="text-white/60">No operatives assigned</p>
                 ) : (

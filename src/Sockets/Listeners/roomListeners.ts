@@ -21,39 +21,29 @@ export const setupRoomListeners = (
     };
 
     // Starting a game
-    const handleGameStart = (gameData: any) => {
+    const handleGameStart = (data: any) => {
         updateRoom({
             gameStarted: true,
-            gameGrid: gameData.gameGrid,
-            currentTurn: gameData.currentTurn,
-        });
-    };
-
-    // Spymaster submitting a clue
-    const handleClueSubmission = (gameData: any) => {
-        updateRoom({
-            currentTurnData: gameData
+            gameGrid: data.gameGrid,
         });
     };
 
     // Operator selecting a card
-    const handleCardReveal = (gameData: any) => {
+    const handleCardReveal = (data: any) => {
         updateRoom({
-            gameGrid: gameData.gameGrid,
-            teamRedPoints: gameData.teamRedPoints,
-            teamBluePoints: gameData.teamBluePoints
+            gameGrid: data.gameGrid,
+            teamRedPoints: data.teamRedPoints,
+            teamBluePoints: data.teamBluePoints
         });
     };
 
     socket.on('team updated', handleTeamUpdate);
     socket.on('game started', handleGameStart);
-    socket.on('clue submitted', handleClueSubmission);
     socket.on('card revealed', handleCardReveal);
 
     return () => {
         socket.off('team updated', handleTeamUpdate);
         socket.off('game started', handleGameStart);
-        socket.off('clue submitted', handleClueSubmission);
         socket.off('card revealed', handleCardReveal);
     };
 };
