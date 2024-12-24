@@ -1,6 +1,15 @@
 import { Socket } from "socket.io-client";
 import { GameState } from "../../Interfaces";
 
+
+// // Game state
+// const [gameState, setGameState] = useState<GameState>({
+//     gameStarted: false,
+//     teamRedPoints: 0,
+//     teamBluePoints: 0,
+//     currentTurnData: null
+// });
+
 // Handles game listeners
 export const setupGameListeners = (
     socket: Socket,
@@ -18,13 +27,14 @@ export const setupGameListeners = (
         });
     };
 
+    // Resetting a game
     const handleResetGame = (data: any) => {
         console.log("Game Reset: ", data);
         updateGameState({
             gameStarted: false,
+            currentTurnData: null,
             teamRedPoints: null,
             teamBluePoints: null,
-            currentTurnData: null
         });
     }
 

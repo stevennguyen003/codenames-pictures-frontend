@@ -118,8 +118,6 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
         const cleanup = setupRoomListeners(
             socket,
             updateRoomDetails,
-            setUserDetails,
-            nickname
         );
 
         initializeRoom();

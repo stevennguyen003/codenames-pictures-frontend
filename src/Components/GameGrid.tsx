@@ -1,49 +1,106 @@
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { GameCard, TurnData, UserDetails } from '../Interfaces';
+import { GiBattleship } from "react-icons/gi";
+import { GiJetFighter } from "react-icons/gi";
+import { GiSheep } from "react-icons/gi";
 
-// Props Interface
 interface GameGridProps {
     gameGrid?: GameCard[];
     userDetails: UserDetails;
-    currentTurnData: TurnData | null
+    currentTurnData: TurnData | null;
     handleCardClick: (cardIndex: number) => void;
 }
 
-// Represents the grid of cards for a game
 function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: GameGridProps) {
     if (!gameGrid) return null;
+
+    const getCardStyle = (card: GameCard) => {
+        if (card.revealed) {
+            switch (card.type) {
+                case 'red':
+                    return 'border-4 border-red-500';
+                case 'blue':
+                    return 'border-4 border-blue-500';
+                case 'assassin':
+                    return 'border-4 border-black';
+                default:
+                    return 'border-4 border-gray-500';
+            }
+        }
+        if (userDetails.role === 'spymaster') {
+            switch (card.type) {
+                case 'red':
+                    return 'border-4 border-red-500';
+                case 'blue':
+                    return 'border-4 border-blue-500';
+                case 'assassin':
+                    return 'border-4 border-black';
+                default:
+                    return 'border-4 border-gray-500';
+            }
+        }
+        return 'bg-gray-200';
+    };
+
+    const getOverlayColor = (card: GameCard) => {
+        if (card.revealed) {
+            switch (card.type) {
+                case 'red':
+                    return 'bg-red-500';
+                case 'blue':
+                    return 'bg-blue-500';
+                case 'assassin':
+                    return 'bg-black';
+                default:
+                    return 'bg-gray-500';
+            }
+        }
+        return '';
+    };
+
+    const getCardIcon = (card: GameCard) => {
+        if (!card.revealed) return null;
+        
+        switch (card.type) {
+            case 'blue':
+                return <GiBattleship className="w-16 h-16 text-white" />;
+            case 'red':
+                return <GiJetFighter className="w-16 h-16 text-white" />;
+            case 'neutral':
+                return <GiSheep className="w-16 h-16 text-white" />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className="text-center mb-4">
             <div className="grid grid-cols-5 grid-rows-5 gap-2 max-w-screen-sm w-full">
-                {/* Card types are only visible to spymaster */}
                 {gameGrid.map((card, index) => (
                     <div
                         key={index}
-                        className={`w-full h-28 relative rounded 
-                            ${userDetails.role === 'spymaster' || card.revealed ?
-                                (card.type === 'red' ? 'border-4 border-red-500' :
-                                    card.type === 'blue' ? 'border-4 border-blue-500' :
-                                        card.type === 'assassin' ? 'border-4 border-black' :
-                                            'border-4 border-gray-500') : 'bg-gray-200'}`}
+                        className={`w-full h-28 relative rounded ${getCardStyle(card)}`}
                     >
                         <img
                             src={`/codenames-cards/${card.image}`}
                             alt={`Card ${index + 1}`}
                             className="w-full h-full object-cover rounded"
                         />
-                        {userDetails.role !== 'spymaster' && (
-                            <div className="absolute inset-0 rounded"></div>
-                        )}
+                        
+                        {/* Solid color overlay for revealed cards */}
+                        <div className={`absolute inset-0 rounded z-10 ${getOverlayColor(card)} 
+                            flex items-center justify-center`}>
+                            {getCardIcon(card)}
+                        </div>
 
                         {/* Icon that allows operators to select the card */}
-                        {currentTurnData?.clueNumber && userDetails.role !== 'spymaster' &&
+                        {currentTurnData?.clueNumber && userDetails.role !== 'spymaster' && !card.revealed && (
                             <div
-                                className="absolute top-2 right-2 text-2xl text-black"
+                                className="absolute top-2 right-2 text-2xl text-white hover:text-gray-200 z-20 cursor-pointer"
                                 onClick={() => handleCardClick(index)}>
                                 <FaArrowAltCircleDown />
                             </div>
-                        }
+                        )}
                     </div>
                 ))}
             </div>

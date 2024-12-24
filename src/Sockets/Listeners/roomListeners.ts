@@ -3,12 +3,23 @@ import { RoomDetails } from "../../Interfaces";
 
 type RoomUpdateCallback = (details: Partial<RoomDetails>) => void;
 
+// const [roomDetails, setRoomDetails] = useState<RoomDetails>({
+//     gameLog: [],
+//     users: [],
+//     spectators: [],
+//     teamRed: [],
+//     teamBlue: [],
+//     gameGrid: [],
+//     gameStarted: false,
+//     currentTurnData: null,
+//     teamRedPoints: null,
+//     teamBluePoints: null
+// });
+
 // Handles room event listeners
 export const setupRoomListeners = (
-    socket: Socket, 
+    socket: Socket,
     updateRoom: RoomUpdateCallback,
-    updateUserDetails: (details: any) => void,
-    nickname: string
 ) => {
 
     // Updating a team
@@ -25,6 +36,9 @@ export const setupRoomListeners = (
         updateRoom({
             gameStarted: true,
             gameGrid: data.gameGrid,
+            currentTurnData: data.currentTurnData,
+            teamRedPoints: data.teamRedPoints,
+            teamBluePoints: data.teamBluePoints
         });
     };
 
@@ -32,6 +46,7 @@ export const setupRoomListeners = (
     const handleCardReveal = (data: any) => {
         updateRoom({
             gameGrid: data.gameGrid,
+            currentTurnData: data.currentTurnData,
             teamRedPoints: data.teamRedPoints,
             teamBluePoints: data.teamBluePoints
         });
