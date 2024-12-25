@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import SocketContext from './SocketContext';
 import { setupSocketListeners } from '../../Sockets/Listeners/socketListeners';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+
 // Socket Provider 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -19,7 +21,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setSessionId(existingSessionId);
 
         // New Socket
-        const newSocket = io('http://localhost:4000', { 
+        const newSocket = io(BACKEND_URL, { 
             withCredentials: true,
             query: { sessionId: existingSessionId }
         });
