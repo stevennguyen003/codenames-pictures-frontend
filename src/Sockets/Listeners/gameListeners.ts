@@ -8,6 +8,8 @@ import { GameState } from "../../Interfaces";
 //     teamRedPoints: 0,
 //     teamBluePoints: 0,
 //     currentTurnData: null
+//     gameOver: false
+//     winner: null
 // });
 
 // Handles game listeners
@@ -44,7 +46,9 @@ export const setupGameListeners = (
         updateGameState({
             teamRedPoints: data.teamRedPoints,
             teamBluePoints: data.teamBluePoints,
-            currentTurnData: data.currentTurnData
+            currentTurnData: data.currentTurnData,
+            gameOver: data.gameOver,
+            winner: data.winner
         });
     };
 

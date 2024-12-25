@@ -42,6 +42,24 @@ export const setupRoomListeners = (
         });
     };
 
+    // Resetting a game
+    const handleResetGame = (data: any) => {
+        console.log("Game Reset: ", data);
+        updateRoom({
+            gameStarted: false,
+            currentTurnData: null,
+            teamRedPoints: null,
+            teamBluePoints: null,
+        });
+    }
+
+    // Submitting a clue
+    const handleClueSubmission = (data: any) => {
+        updateRoom({
+            currentTurnData: data.currentTurnData
+        });
+    };
+
     // Operator selecting a card
     const handleCardReveal = (data: any) => {
         updateRoom({
@@ -54,11 +72,15 @@ export const setupRoomListeners = (
 
     socket.on('team updated', handleTeamUpdate);
     socket.on('game started', handleGameStart);
+    socket.on('reset game', handleResetGame);
+    socket.on('clue submitted', handleClueSubmission);
     socket.on('card revealed', handleCardReveal);
 
     return () => {
         socket.off('team updated', handleTeamUpdate);
         socket.off('game started', handleGameStart);
+        socket.off('reset game', handleResetGame);
+        socket.off('clue submitted', handleClueSubmission);
         socket.off('card revealed', handleCardReveal);
     };
 };

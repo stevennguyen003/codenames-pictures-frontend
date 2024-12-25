@@ -41,16 +41,12 @@ function TeamTracker({
     const operators = teamMembers.filter(member => member.role === 'operator');
     const spymasters = teamMembers.filter(member => member.role === 'spymaster');
 
-    // Custom colors
-    const backgroundColor = teamColor === 'red' ? '#B22222' : '#4169E1';
-    const buttonColor = '#C7B299';
-    const titleColor = teamColor === 'red' ? '#FF7F7F' : '#ADD8E6'; 
+    // Determine colors based on team color
+    const backgroundColorClass = teamColor === 'red' ? 'bg-customRed' : 'bg-customBlue';
+    const titleColorClass = teamColor === 'red' ? 'text-customTitleRed' : 'text-customTitleBlue';
 
     return (
-        <div 
-            className="p-4 shadow-lg rounded-lg"
-            style={{ backgroundColor }}
-        >
+        <div className={`p-4 shadow-lg rounded-lg ${backgroundColorClass}`}>
             <h2 className="text-xl font-bold mb-4 text-white flex items-center">
                 {teamColor.charAt(0).toUpperCase() + teamColor.slice(1)} Team
                 {teamPoints !== null && (
@@ -64,25 +60,13 @@ function TeamTracker({
                 <div className="flex justify-center space-x-2 mb-4">
                     <button
                         onClick={() => handleJoinTeam('operator')}
-                        className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105"
-                        style={{ 
-                            backgroundColor: buttonColor,
-                            color: 'white',
-                            transition: 'all 0.2s ease',
-                            fontWeight: 500
-                        }}
+                        className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105 bg-customButton text-white font-medium"
                     >
                         Join as Operative
                     </button>
                     <button
                         onClick={() => handleJoinTeam('spymaster')}
-                        className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105"
-                        style={{ 
-                            backgroundColor: buttonColor,
-                            color: 'white',
-                            transition: 'all 0.2s ease',
-                            fontWeight: 500
-                        }}
+                        className="px-4 py-2 rounded shadow-md transition-all transform hover:scale-105 bg-customButton text-white font-medium"
                     >
                         Join as Spymaster
                     </button>
@@ -90,7 +74,7 @@ function TeamTracker({
             )}
 
             <div>
-                <h3 className="font-semibold mb-2" style={{ color: titleColor }}>Spymaster:</h3>
+                <h3 className={`font-semibold mb-2 ${titleColorClass}`}>Spymaster:</h3>
                 {spymasters.length === 0 ? (
                     <p className="text-white/60 mb-4">No spymaster assigned</p>
                 ) : (
@@ -99,7 +83,7 @@ function TeamTracker({
                     </ul>
                 )}
 
-                <h3 className="font-semibold mb-2" style={{ color: titleColor }}>Operatives:</h3>
+                <h3 className={`font-semibold mb-2 ${titleColorClass}`}>Operatives:</h3>
                 {operators.length === 0 ? (
                     <p className="text-white/60">No operatives assigned</p>
                 ) : (

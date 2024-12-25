@@ -21,7 +21,7 @@ function RoomPage() {
     const { roomDetails, selectTeamRole, userDetails } = useRoomDetails(finalRoomCode, nickname);
     console.log("Room Details: ", roomDetails);
 
-    const { canGameStart, startGame, gameStarted, resetGame, handleCardClick, currentTurnData} = useGameLogic(finalRoomCode, roomDetails, socket);
+    const { canGameStart, startGame, resetGame, handleCardClick, gameOver, winner } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
@@ -71,14 +71,14 @@ function RoomPage() {
                     teamColor="red"
                     teamMembers={roomDetails.teamRed}
                     onSelectRole={selectTeamRole}
-                    currentTurnData={currentTurnData}
+                    currentTurnData={roomDetails.currentTurnData}
                     teamPoints={roomDetails.teamRedPoints}
                 />
             </div>
 
             {/* Middle Column: Game Content */}
             <div className="w-2/4 flex flex-col items-center">
-                {!gameStarted ? (
+                {!roomDetails.gameStarted ? (
                     <div className="w-full flex flex-col items-center">
                         {canGameStart() ? (
                             <button
@@ -103,15 +103,15 @@ function RoomPage() {
                         <GameGrid
                             gameGrid={roomDetails.gameGrid}
                             userDetails={userDetails}
-                            currentTurnData={currentTurnData}
+                            currentTurnData={roomDetails.currentTurnData}
                             handleCardClick={handleCardClick}
                         />
-                        {currentTurnData &&
+                        {roomDetails.currentTurnData &&
                             <ClueForm
                                 userDetails={userDetails}
                                 socket={socket}
                                 roomCode={finalRoomCode}
-                                currentTurnData={currentTurnData}
+                                currentTurnData={roomDetails.currentTurnData}
                             />
                         }
                     </div>
@@ -125,7 +125,7 @@ function RoomPage() {
                     teamColor="blue"
                     teamMembers={roomDetails.teamBlue}
                     onSelectRole={selectTeamRole}
-                    currentTurnData={currentTurnData}
+                    currentTurnData={roomDetails.currentTurnData}
                     teamPoints={roomDetails.teamBluePoints}
                 />
                 <button onClick={resetGame}>Reset Game</button>

@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client";
 // Represents room emitters
 export const roomEmitters = {
 
+    // Join a room
     joinRoom: (
         socket: Socket, 
         roomCode: string, 
@@ -17,6 +18,7 @@ export const roomEmitters = {
         });
     },
 
+    // Selecting a role
     selectRole: (
         socket: Socket,
         roomCode: string,

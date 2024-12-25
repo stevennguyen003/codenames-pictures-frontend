@@ -16,7 +16,7 @@ export interface RoomDetails {
     teamBlue: TeamMember[];
     gameStarted: boolean;
     gameGrid?: GameCard[];
-    currentTurnData?: TurnData | null;
+    currentTurnData: TurnData | null;
     teamRedPoints: number | null;
     teamBluePoints: number | null;
 }
@@ -26,6 +26,8 @@ export interface GameState {
     teamRedPoints: number | null;
     teamBluePoints: number | null;
     currentTurnData: TurnData | null;
+    gameOver: boolean;
+    winner: Team | null;
 }
 
 

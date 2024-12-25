@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { UserDetails, TurnData } from '../Interfaces';
 import { gameEmitters } from '../Sockets/Emitters/gameEmitters';
 
+// Props for the clue form component
 interface ClueFormProps {
     userDetails: UserDetails;
     socket: any;
@@ -14,10 +15,12 @@ function ClueForm({ userDetails, socket, roomCode, currentTurnData }: ClueFormPr
     const [clue, setClue] = useState('');
     const [number, setNumber] = useState<number | string>('');
 
+    // Clue change input handler
     const handleClueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setClue(event.target.value);
     };
 
+    // Number change input handler
     const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setNumber(value === '' ? '' : parseInt(value, 10));

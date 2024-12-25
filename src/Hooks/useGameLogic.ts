@@ -15,7 +15,9 @@ export const useGameLogic = (
         gameStarted: false,
         teamRedPoints: 0,
         teamBluePoints: 0,
-        currentTurnData: null
+        currentTurnData: null,
+        gameOver: false,
+        winner: null
     });
 
     // Updating a game state
@@ -96,11 +98,9 @@ export const useGameLogic = (
     return {
         canGameStart,
         startGame,
-        gameStarted: gameState.gameStarted,
         handleCardClick,
         resetGame,
-        teamRedPoints: gameState.teamRedPoints,
-        teamBluePoints: gameState.teamBluePoints,
-        currentTurnData: gameState.currentTurnData
+        gameOver: gameState.gameOver,
+        winner: gameState.winner,
     };
 };
