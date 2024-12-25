@@ -8,7 +8,6 @@ import GameGrid from "../Components/GameGrid";
 import ClueForm from "../Components/ClueForm";
 import NicknameModal from "../Components/NicknameModal";
 
-// Displays a room page
 function RoomPage() {
     const { socket } = useSocket();
     const navigate = useNavigate();
@@ -17,10 +16,7 @@ function RoomPage() {
     const [nickname, setNickname] = useState<string>("");
     const [showModal, setShowModal] = useState<boolean>(false);
 
-    // Use custom hooks to fetch details
     const { roomDetails, selectTeamRole, userDetails } = useRoomDetails(finalRoomCode, nickname);
-    console.log("Room Details: ", roomDetails);
-
     const { canGameStart, startGame, resetGame, handleCardClick, gameOver, winner } = useGameLogic(finalRoomCode, roomDetails, socket);
 
     useEffect(() => {
@@ -32,14 +28,12 @@ function RoomPage() {
         }
     }, []);
 
-    // Function to handle nickname submission and save it to localStorage
     const handleNicknameSubmit = (nickname: string) => {
         setNickname(nickname);
         localStorage.setItem('nickname', nickname);
         setShowModal(false);
     };
 
-    // Ensure we have a socket before rendering
     if (!socket || finalRoomCode === "invalid") {
         return (
             <div className="h-screen flex flex-col items-center justify-center p-4">
@@ -57,7 +51,6 @@ function RoomPage() {
 
     return (
         <div className="h-screen flex justify-between p-4">
-            {/* Modal for nickname input */}
             <NicknameModal
                 isVisible={showModal}
                 onNicknameSubmit={handleNicknameSubmit}
@@ -78,8 +71,8 @@ function RoomPage() {
 
             {/* Middle Column: Game Content */}
             <div className="w-2/4 flex flex-col items-center">
-                {!roomDetails.gameStarted ? (
-                    <div className="w-full flex flex-col items-center">
+                {!roomDetails.gameStarted && (
+                    <>
                         {canGameStart() ? (
                             <button
                                 onClick={startGame}
@@ -88,17 +81,17 @@ function RoomPage() {
                                 Start Game
                             </button>
                         ) : (
-                            <div
-                                className="bg-gray-300 text-gray-500 px-4 py-2 rounded mt-4 cursor-not-allowed"
-                            >
+                            <div className="bg-gray-300 text-gray-500 px-4 py-2 rounded mt-4 cursor-not-allowed">
                                 Start Game
                             </div>
                         )}
                         <p className="mt-2 text-sm text-gray-600">
                             Requires at least 1 spymaster and 1 operator per team
                         </p>
-                    </div>
-                ) : (
+                    </>
+                )}
+
+                {roomDetails.gameStarted && (
                     <div className="w-full flex flex-col items-center justify-center">
                         <GameGrid
                             gameGrid={roomDetails.gameGrid}
@@ -106,15 +99,21 @@ function RoomPage() {
                             currentTurnData={roomDetails.currentTurnData}
                             handleCardClick={handleCardClick}
                         />
-                        {roomDetails.currentTurnData &&
+                        {roomDetails.currentTurnData && (
                             <ClueForm
                                 userDetails={userDetails}
                                 socket={socket}
                                 roomCode={finalRoomCode}
                                 currentTurnData={roomDetails.currentTurnData}
                             />
-                        }
+                        )}
                     </div>
+                )}
+
+                {gameOver && !roomDetails.gameStarted && (
+                    <h1 className="text-4xl font-bold mt-8">
+                        {winner?.toUpperCase()} TEAM WINS!
+                    </h1>
                 )}
             </div>
 

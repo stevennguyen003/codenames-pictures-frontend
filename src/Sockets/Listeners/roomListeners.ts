@@ -63,6 +63,7 @@ export const setupRoomListeners = (
     // Operator selecting a card
     const handleCardReveal = (data: any) => {
         updateRoom({
+            gameStarted: data.gameStarted,
             gameGrid: data.gameGrid,
             currentTurnData: data.currentTurnData,
             teamRedPoints: data.teamRedPoints,

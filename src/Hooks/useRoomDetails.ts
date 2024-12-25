@@ -129,6 +129,7 @@ export const useRoomDetails = (roomCode: string, nickname: string) => {
 
     return {
         roomDetails,
+        setRoomDetails,
         selectTeamRole,
         userDetails
     };

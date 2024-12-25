@@ -101,7 +101,7 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
                         {/* Icon that allows operators to select the card */}
                         {currentTurnData?.clueNumber && userDetails.role !== 'spymaster' && !card.revealed && (
                             <div
-                                className="absolute top-2 right-2 text-2xl text-white hover:text-gray-200 z-20 cursor-pointer"
+                                className="absolute top-2 right-2 text-2xl text-black hover:text-gray-800 z-20 cursor-pointer"
                                 onClick={() => handleCardClick(index)}>
                                 <FaArrowAltCircleDown />
                             </div>

@@ -44,6 +44,7 @@ export const setupGameListeners = (
     const handleCardReveal = (data: any) => {
         console.log("Card revealed: ", data);
         updateGameState({
+            gameStarted: data.gameStarted,
             teamRedPoints: data.teamRedPoints,
             teamBluePoints: data.teamBluePoints,
             currentTurnData: data.currentTurnData,
