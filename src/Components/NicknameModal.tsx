@@ -1,15 +1,18 @@
 import { useState } from "react";
 
+// Props for Nickname Modal
 interface NicknameModalProps {
     isVisible: boolean;
     onNicknameSubmit: (nickname: string) => void;
     onClose: () => void;
 }
 
+// Nickname Modal component if socket does not have a nickname
 function NicknameModal({ isVisible, onNicknameSubmit, onClose }: NicknameModalProps) {
     const [localNickname, setLocalNickname] = useState<string>("");
     const [error, setError] = useState<string>("");
 
+    // Form submission handler
     const handleSubmit = () => {
         if (localNickname.trim()) {
             setError("");
@@ -32,7 +35,8 @@ function NicknameModal({ isVisible, onNicknameSubmit, onClose }: NicknameModalPr
                     onChange={(e) => setLocalNickname(e.target.value)} // Update local state
                     placeholder="Enter nickname"
                 />
-                {error && <p className="text-red-500 text-sm mb-4">{error}</p>} {/* Error message */}
+                {/* Error message */}
+                {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                 <div className="flex justify-between">
                     <button
                         onClick={handleSubmit}

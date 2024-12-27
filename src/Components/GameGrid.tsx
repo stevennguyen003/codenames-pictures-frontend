@@ -18,19 +18,7 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
 
     // Get the card style based on the card type, user role, and whether it's revealed
     const getCardStyle = (card: GameCard) => {
-        if (card.revealed) {
-            switch (card.type) {
-                case 'red':
-                    return 'border-4 border-customRed';
-                case 'blue':
-                    return 'border-4 border-customBlue';
-                case 'assassin':
-                    return 'border-4 border-black';
-                default:
-                    return 'border-4 border-gray-500';
-            }
-        }
-        if (userDetails.role === 'spymaster') {
+        if (card.revealed || userDetails.role === 'spymaster') {
             switch (card.type) {
                 case 'red':
                     return 'border-4 border-customRed';
