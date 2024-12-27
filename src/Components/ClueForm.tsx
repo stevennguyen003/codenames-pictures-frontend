@@ -49,6 +49,8 @@ function ClueForm({ userDetails, socket, roomCode, currentTurnData }: ClueFormPr
         }
     }
 
+    console.log("Clue Form User Details: ", userDetails);
+
     // If there's a current clue, show it
     if (currentTurnData.currentClue) {
         return (

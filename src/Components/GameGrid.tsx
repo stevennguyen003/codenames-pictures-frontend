@@ -78,6 +78,15 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
         }
     };
 
+    const canSelectCard = (card: GameCard) => {
+        return (
+            currentTurnData?.clueNumber &&
+            userDetails.role !== 'spymaster' &&
+            !card.revealed &&
+            currentTurnData.currentTurn == userDetails.teamColor
+        );
+    };
+
     return (
         <div className="text-center mb-4">
             <div className="grid grid-cols-5 grid-rows-5 gap-2 max-w-screen-sm w-full">
@@ -99,7 +108,7 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
                         </div>
 
                         {/* Icon that allows operators to select the card */}
-                        {currentTurnData?.clueNumber && userDetails.role !== 'spymaster' && !card.revealed && (
+                        {canSelectCard(card) && (
                             <div
                                 className="absolute top-2 right-2 text-2xl text-black hover:text-gray-800 z-20 cursor-pointer"
                                 onClick={() => handleCardClick(index)}>
