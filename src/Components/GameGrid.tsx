@@ -16,7 +16,7 @@ interface GameGridProps {
 function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: GameGridProps) {
     if (!gameGrid) return null;
 
-    // Get the card style based on the card type, user role, and whether it's revealed
+    // Card border color when revealed
     const getCardStyle = (card: GameCard) => {
         if (card.revealed || userDetails.role === 'spymaster') {
             switch (card.type) {
@@ -66,12 +66,13 @@ function GameGrid({ gameGrid, userDetails, currentTurnData, handleCardClick }: G
         }
     };
 
+    // Conditional for cards to be clickable
     const canSelectCard = (card: GameCard) => {
         return (
             currentTurnData?.clueNumber &&
             userDetails.role !== 'spymaster' &&
             !card.revealed &&
-            currentTurnData.currentTurn == userDetails.teamColor
+            currentTurnData.currentTurn === userDetails.teamColor
         );
     };
 

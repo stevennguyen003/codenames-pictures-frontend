@@ -54,16 +54,15 @@ function RoomPage() {
     }
 
     return (
-        <div className="h-screen flex justify-between p-4">
-            {/* Pop up if no session found */}
+        <div className="h-screen flex flex-col md:flex-row justify-between p-4">
             <NicknameModal
                 isVisible={showModal}
                 onNicknameSubmit={handleNicknameSubmit}
                 onClose={() => setShowModal(false)}
             />
 
-            {/* Left Column: Red Team Tracker */}
-            <div className="w-1/4">
+            {/* Left Team Tracker - Hidden on mobile, visible on md+ screens */}
+            <div className="hidden md:block md:w-1/4">
                 <TeamTracker
                     nickname={nickname}
                     teamColor="red"
@@ -74,9 +73,8 @@ function RoomPage() {
                 />
             </div>
 
-            {/* Middle Column: Game Content */}
-            <div className="w-2/4 flex flex-col items-center">
-                {/* Lobby waiting content */}
+            {/* Middle Column - Full width on mobile, 2/4 on md+ screens */}
+            <div className="w-full md:w-2/4 flex flex-col items-center">
                 {!roomDetails.gameStarted && (
                     <>
                         {canGameStart() ? (
@@ -97,7 +95,6 @@ function RoomPage() {
                     </>
                 )}
 
-                {/* Game grid and clue form when game has started */}
                 {roomDetails.gameStarted && (
                     <div className="w-full flex flex-col items-center justify-center">
                         <GameGrid
@@ -117,7 +114,6 @@ function RoomPage() {
                     </div>
                 )}
 
-                {/* Winner log */}
                 {gameOver && !roomDetails.gameStarted && (
                     <h1 className="text-4xl font-bold mt-8">
                         {winner?.toUpperCase()} TEAM WINS!
@@ -125,8 +121,8 @@ function RoomPage() {
                 )}
             </div>
 
-            {/* Right Column: Blue Team Tracker */}
-            <div className="w-1/4">
+            {/* Right Team Tracker - Hidden on mobile, visible on md+ screens */}
+            <div className="hidden md:block md:w-1/4">
                 <TeamTracker
                     nickname={nickname}
                     teamColor="blue"
@@ -135,7 +131,46 @@ function RoomPage() {
                     currentTurnData={roomDetails.currentTurnData}
                     teamPoints={roomDetails.teamBluePoints}
                 />
-                <button onClick={resetGame}>Reset Game</button>
+                <button 
+                    onClick={resetGame}
+                    className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                >
+                    Reset Game
+                </button>
+            </div>
+
+            {/* Mobile Team Trackers - Visible only on small screens */}
+            <div className="md:hidden w-full flex flex-col justify-end flex-grow mt-4">
+                <div className="flex">
+                    <div className="w-1/2 pr-2">
+                        <TeamTracker
+                            nickname={nickname}
+                            teamColor="red"
+                            teamMembers={roomDetails.teamRed}
+                            onSelectRole={selectTeamRole}
+                            currentTurnData={roomDetails.currentTurnData}
+                            teamPoints={roomDetails.teamRedPoints}
+                        />
+                    </div>
+                    <div className="w-1/2 pl-2">
+                        <TeamTracker
+                            nickname={nickname}
+                            teamColor="blue"
+                            teamMembers={roomDetails.teamBlue}
+                            onSelectRole={selectTeamRole}
+                            currentTurnData={roomDetails.currentTurnData}
+                            teamPoints={roomDetails.teamBluePoints}
+                        />
+                    </div>
+                </div>
+                <div className="w-full mt-4">
+                    <button 
+                        onClick={resetGame}
+                        className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                    >
+                        Reset Game
+                    </button>
+                </div>
             </div>
         </div>
     );
