@@ -61,10 +61,7 @@ function HomePage() {
                 <div className="mb-1 relative pt-5">
                     {nicknameError && (
                         <span
-                            className="absolute top-0 left-0 text-sm text-gray-500"
-                            style={{
-                                fontFamily: "'Comic Sans MS', cursive",
-                            }}
+                            className="absolute top-0 left-0 text-sm text-gray-500 font-comic" 
                         >
                             {nicknameError}
                         </span>
@@ -84,10 +81,7 @@ function HomePage() {
                 <div className="mb-3 relative pt-5">
                     {roomCodeError && (
                         <span
-                            className="absolute top-0 left-0 text-sm text-gray-500"
-                            style={{
-                                fontFamily: "'Comic Sans MS', cursive",
-                            }}
+                            className="absolute top-0 left-0 text-sm text-gray-500 font-comic"
                         >
                             {roomCodeError}
                         </span>
@@ -110,9 +104,8 @@ function HomePage() {
                             Join Room
                         </button>
                         <span
-                            className={`text-xs font-medium max-w-[150px] leading-tight text-center sm:text-right sm:ml-4 ${joinRoomError ? 'text-red-500' : 'text-gray-500'}`}
+                            className={`text-xs font-medium max-w-[150px] leading-tight text-center sm:text-right sm:ml-4 ${joinRoomError ? 'text-red-500' : 'text-gray-500'} font-comic`}
                             style={{
-                                fontFamily: "'Comic Sans MS', cursive",
                                 transform: "rotate(-2deg)",
                             }}
                         >

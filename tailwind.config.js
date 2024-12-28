@@ -12,6 +12,9 @@ module.exports = {
         customTitleRed: '#FF7F7F',
         customTitleBlue: '#ADD8E6',
       },
+      fontFamily: {
+        comic: ['"Comic Sans MS"', 'Chalkboard SE', 'Marker Felt', 'cursive'],
+      },
     },
   },
   plugins: [],

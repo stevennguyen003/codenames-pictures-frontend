@@ -8,6 +8,7 @@ import GameGrid from "../Components/GameGrid";
 import ClueForm from "../Components/ClueForm";
 import NicknameModal from "../Components/NicknameModal";
 
+// Room Page for game room
 function RoomPage() {
     const { socket } = useSocket();
     const navigate = useNavigate();
@@ -26,14 +27,17 @@ function RoomPage() {
         } else {
             setShowModal(true);
         }
+        console.log("Nickname: ", storedNickname);
     }, []);
 
+    // Handle nickname submission for modal
     const handleNicknameSubmit = (nickname: string) => {
         setNickname(nickname);
         localStorage.setItem('nickname', nickname);
         setShowModal(false);
     };
 
+    // Error handling for invalid room code
     if (!socket || finalRoomCode === "invalid") {
         return (
             <div className="h-screen flex flex-col items-center justify-center p-4">
@@ -51,6 +55,7 @@ function RoomPage() {
 
     return (
         <div className="h-screen flex justify-between p-4">
+            {/* Pop up if no session found */}
             <NicknameModal
                 isVisible={showModal}
                 onNicknameSubmit={handleNicknameSubmit}
@@ -71,6 +76,7 @@ function RoomPage() {
 
             {/* Middle Column: Game Content */}
             <div className="w-2/4 flex flex-col items-center">
+                {/* Lobby waiting content */}
                 {!roomDetails.gameStarted && (
                     <>
                         {canGameStart() ? (
@@ -91,6 +97,7 @@ function RoomPage() {
                     </>
                 )}
 
+                {/* Game grid and clue form when game has started */}
                 {roomDetails.gameStarted && (
                     <div className="w-full flex flex-col items-center justify-center">
                         <GameGrid
@@ -110,6 +117,7 @@ function RoomPage() {
                     </div>
                 )}
 
+                {/* Winner log */}
                 {gameOver && !roomDetails.gameStarted && (
                     <h1 className="text-4xl font-bold mt-8">
                         {winner?.toUpperCase()} TEAM WINS!
